@@ -110,7 +110,7 @@ int main()
 	halt(1);
 
 	uint64_t key;
-	while(key = getKey()) {
+	while((key = getKey())) {
 		// uint64_t key = getKey();
 	    ncPrintDec(key);
 	    ncPrintChar(' ');

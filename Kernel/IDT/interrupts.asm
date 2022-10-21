@@ -19,6 +19,7 @@ GLOBAL _sysCall80Handler
 
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
+EXTERN sysCallDispatcher
 
 SECTION .text
 

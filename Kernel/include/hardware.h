@@ -9,6 +9,9 @@ uint64_t getRTC(uint64_t code);
 void keyboard_handler();
 uint64_t dump_buffer(char * dest, uint64_t size);
 
+void fill_buffer ();
+uint64_t dump_buffer(char * dest, uint64_t size);
+
 char * get_buffer ();
 int buffer_count ();
 void clear_buffer ();

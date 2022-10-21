@@ -26,7 +26,7 @@ void keyboard_handler() {
     fill_buffer();
 }
 
-uint64_t fill_buffer () {
+void fill_buffer () {
     uint64_t key = getKey();
     if (key >= 0 && key<= 57 && buffer_index<BUFFER_SIZE) {
         if(keys[key])

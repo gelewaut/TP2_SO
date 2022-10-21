@@ -18,6 +18,7 @@ uint64_t sys_write(int fd, const char * buf, uint64_t count) {
     for(i=0; i<count; i++) {
         ncPrintChar(buf[i]);
     }
+    return i;
 }
 
 uint64_t sys_writeAT(char * character, uint64_t bytes, int x, int y) {
