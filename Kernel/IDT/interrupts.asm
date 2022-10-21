@@ -20,6 +20,9 @@ GLOBAL _sysCall80Handler
 EXTERN irqDispatcher
 EXTERN exceptionDispatcher
 EXTERN sysCallDispatcher
+EXTERN halt10
+EXTERN ncClear
+EXTERN saveRegs
 
 SECTION .text
 
@@ -114,10 +117,19 @@ SECTION .text
 %macro exceptionHandler 1
 	pushState
 
+	call saveRegs
+
 	mov rdi, %1 ; pasaje de parametro
 	call exceptionDispatcher
 
 	popState
+	sti
+    mov rdi, 0xFC
+    call picMasterMask
+	call halt10
+    pop rax
+    call ncClear
+    push 0x400000
 	iretq
 %endmacro
 

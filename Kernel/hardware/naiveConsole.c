@@ -1,8 +1,8 @@
 #include <naiveConsole.h>
 
 #define WHITE_ON_BLACK 0x0F
-#define LIGHTGRAY 7
-#define BLACK 0
+// #define LIGHTGRAY 7
+// #define BLACK 0
 
 static uint32_t uintToBase(uint64_t value, char * buffer, uint32_t base);
 

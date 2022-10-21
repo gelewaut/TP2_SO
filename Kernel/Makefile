@@ -2,7 +2,7 @@ include Makefile.inc
 
 KERNEL=kernel.bin
 SOURCES=$(wildcard *.c) $(wildcard exeptions/*.c) $(wildcard hardware/*.c) $(wildcard IDT/*.c) $(wildcard memoryManager/*.c)
-SOURCES_ASM=$(wildcard asm/*.asm) $(wildcard hardware/*.asm) $(wildcard IDT/*.asm)
+SOURCES_ASM=$(wildcard asm/*.asm) $(wildcard hardware/*.asm) $(wildcard IDT/*.asm) $(wildcard exeptions/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
 LOADERSRC=loader.asm

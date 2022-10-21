@@ -1,4 +1,5 @@
 #include <hardware.h>
+#include <inforeg.h>
 
 //capslock 58
 //shift izq 42
@@ -28,6 +29,10 @@ void keyboard_handler() {
 
 void fill_buffer () {
     uint64_t key = getKey();
+    if (key == 56) {
+        saveRegs();
+    }
+
     if (key >= 0 && key<= 57 && buffer_index<BUFFER_SIZE) {
         if(keys[key])
             buffer[buffer_index++] = keys[key];
