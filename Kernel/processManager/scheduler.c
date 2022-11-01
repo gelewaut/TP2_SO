@@ -26,23 +26,31 @@ void initScheduler() {
     processes.first = NULL;
     processes.last = NULL;
 
-    // char ** argc = {"First Process"};
     baseProcess = newProcess(&firstProcess, 0, NULL);
-    // current = baseProcess;
 }
 
 void * schedule(void * oldRsp) {
-    // if(current == NULL || processes.ready == 0) {
-    // }
-    // return oldRsp;
-    // /*
-    if (current == NULL) {
+    processList aux = processes;
+    int ok = processes.ready;
+    if (current != NULL) {
+        current->pcb.rsp = oldRsp;
+    } 
+    if (processes.ready) {
+        //solo un elemento en la lista
+        if (processes.first->next == NULL) { 
+            current = processes.first;
+        } else {
+            current = processes.first;
+            processes.first = processes.first->next;
+            processes.last->next = current;
+            current->next = NULL;
+            processes.last = current;
+        }
+    } else {
         current = baseProcess;
-        return baseProcess->pcb.rsp;
     }
-    current->pcb.rsp = oldRsp;
+    
     return current->pcb.rsp;
-    // */
 }
 
 
@@ -53,8 +61,10 @@ void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv) {
     
     if (processes.first == NULL) {
         processes.first = myProcess;
+        processes.last = myProcess;
     } else {
         processes.last->next = myProcess;
+        processes.last = myProcess;
     }
     processes.ready++;
 }

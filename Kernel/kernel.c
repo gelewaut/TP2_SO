@@ -86,12 +86,37 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
+static void processTwo () {
+    while (1){
+	    ncPrintChar('a');
+		halt(1);
+    }
+}
+
+static void processThree () {
+	while (1) {
+        ncPrintChar('b');
+		halt(1);
+	}
+}
+
+static void processFour () {
+	while (1) {
+        ncPrintChar('c');
+		halt(1);
+	}
+}
+
 int main()
 {	
 	mem_init((uint64_t)sampleHeapAddress, HEAP_MEMORY_SIZE);
 	initScheduler();
+	
+	addProcess(&processTwo, 0, NULL);
+    addProcess(&processThree, 0, NULL);
+    addProcess(&processFour, 0, NULL);
+	
 	load_idt();
-
 	/*
 	ncPrint("[Kernel Main]");
 	ncNewline();
