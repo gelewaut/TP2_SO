@@ -1,7 +1,8 @@
-#ifdef FREEMM
+// #ifdef FREEMM
 
 //Codigo extraido o basado en el libro C Programming de Kernigan y Ritchie
 
+#include <naiveConsole.h>
 #include <memoryManager.h>
 #define NULL 0
 #define NALLOC 1024 /* minimo # de unidades por requerir */
@@ -46,7 +47,7 @@ void * my_malloc(unsigned long nbytes){
 
     nunits = (nbytes + sizeof(Header) - 1)/sizeof(Header) + 1;
     if ((prevp = freep) == NULL) { /* no hay lista libre aún */ 
-        base->s.ptr = freep = prevp = &base; 
+        base->s.ptr = freep = prevp = (Header *) &base; 
         base->s.size = 0;
     }
 
@@ -107,6 +108,7 @@ void my_free(void *ap ){
       freep = p;
 }
 
+/*
 void print_memSet(){
     long long idx = 1;
     Header *original, *current;
@@ -130,5 +132,6 @@ void print_memSet(){
     print("%s", "\n\n");
 
 }
+*/
 
-#endif
+// #endif

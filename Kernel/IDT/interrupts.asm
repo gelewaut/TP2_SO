@@ -23,6 +23,7 @@ EXTERN sysCallDispatcher
 EXTERN halt10
 EXTERN ncClear
 EXTERN saveRegs
+EXTERN schedule
 
 SECTION .text
 
@@ -152,7 +153,6 @@ SECTION .text
 	iretq
 %endmacro
 
-
 _hlt:
 	sti
 	hlt
@@ -186,7 +186,24 @@ picSlaveMask:
 
 ;8254 Timer (Timer Tick)
 _irq00Handler:
-	irqHandlerMaster 0
+	pushState
+	mov rdi, 0 ; pasaje de parametro
+	mov rsi, rsp
+	call irqDispatcher	
+
+	; mov rdi, 0 ; pasaje de parametro
+	; call irqDispatcher
+
+	mov rdi, rsp
+	call schedule
+	mov rsp, rax
+
+	mov al, 20h
+	out 20h, al
+
+	popState
+
+	iretq
 
 ;Keyboard
 _irq01Handler:

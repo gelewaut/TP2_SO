@@ -1,6 +1,7 @@
 #Binary Files
 *.bin
 *.sys
+*.elf
 
 #The images
 *.img
@@ -11,3 +12,5 @@
 *.o
 
 .bash_history
+.gdb_history
+.gdbinit
