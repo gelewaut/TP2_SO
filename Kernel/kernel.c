@@ -90,13 +90,23 @@ static void processTwo () {
     while (1){
 	    ncPrintChar('a');
 		halt(1);
-    }
+	    ncPrintChar('a');
+		halt(1);
+	    ncPrintChar('a');
+		halt(1);
+	    ncPrintChar('a');
+		halt(1);
+		blockProcess(2);
+	}
 }
 
 static void processThree () {
 	while (1) {
         ncPrintChar('b');
 		halt(1);
+        ncPrintChar('b');
+		halt(1);
+		blockProcess(3);
 	}
 }
 
@@ -104,6 +114,18 @@ static void processFour () {
 	while (1) {
         ncPrintChar('c');
 		halt(1);
+        ncPrintChar('c');
+		halt(1);
+        ncPrintChar('c');
+		halt(1);
+        ncPrintChar('c');
+		halt(1);
+		unblockProcess(3);
+        ncPrintChar('c');
+		halt(1);
+        ncPrintChar('c');
+		halt(1);
+		unblockProcess(2);
 	}
 }
 

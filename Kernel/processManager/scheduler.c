@@ -29,14 +29,79 @@ void initScheduler() {
     baseProcess = newProcess(&firstProcess, 0, NULL);
 }
 
+void blockProcess (uint64_t pid) {
+    process * aux = findProcess(pid);
+    if (aux != NULL) {
+        aux->state = BLOCKED;
+        processes.ready--;
+        //CALL TIMER TICK
+        halt(1);
+    }
+}
+
+void unblockProcess (uint64_t pid) {
+    process * aux = findProcess(pid);
+    if (aux != NULL) {
+        aux->state = READY;
+        processes.ready++;
+        //CALL TIMER TICK
+        halt(1);
+    }
+}
+
+process * findProcess(uint64_t pid) {
+    process * aux = processes.first;
+    while (aux != NULL) {
+        if (aux->pcb.pid == pid)
+            return aux;
+        aux = aux->next;
+    }
+    return aux;
+}
+
+process * readyProcess() {
+    if (!processes.ready) {
+        return NULL;
+    }
+    //see if the first is ready
+    process * previous = processes.first;
+    if (previous->state == READY) {
+        processes.first = processes.first->next;
+        processes.last->next = previous;
+        previous->next = NULL;
+        processes.last = previous;
+        return previous;
+    }
+
+    process * aux = previous->next;
+    int found = 0;
+
+    while ( aux!=NULL && !found ) {
+        if (aux->state == READY) {
+            found = 1;
+            //watch if ready is the last one
+            if (aux->pcb.pid != processes.last->pcb.pid) {
+                previous->next = aux->next;
+                aux->next = NULL;
+                processes.last->next = aux;
+                processes.last = aux;
+            }
+        } else {
+            previous = aux;
+            aux = aux->next;
+        }
+    }
+    return aux;
+}
+
 void * schedule(void * oldRsp) {
-    processList aux = processes;
-    int ok = processes.ready;
     if (current != NULL) {
         current->pcb.rsp = oldRsp;
     } 
     if (processes.ready) {
+        current = readyProcess();
         //solo un elemento en la lista
+        /*
         if (processes.first->next == NULL) { 
             current = processes.first;
         } else {
@@ -46,6 +111,7 @@ void * schedule(void * oldRsp) {
             current->next = NULL;
             processes.last = current;
         }
+        */
     } else {
         current = baseProcess;
     }

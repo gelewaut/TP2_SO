@@ -62,5 +62,9 @@ void initScheduler();
 void * schedule();
 void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv);
 process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv);
+process * findProcess(uint64_t pid);
+process * readyProcess();
+void unblockProcess (uint64_t pid);
+void blockProcess (uint64_t pid);
 
 #endif
