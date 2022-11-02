@@ -87,45 +87,30 @@ void * initializeKernelBinary()
 }
 
 static void processTwo () {
-    while (1){
-	    ncPrintChar('a');
+    for (int i = 0; i<1; i++){
+		ncPrintChar('a');
 		halt(1);
-	    ncPrintChar('a');
-		halt(1);
-	    ncPrintChar('a');
-		halt(1);
-	    ncPrintChar('a');
-		halt(1);
-		blockProcess(2);
+		// blockProcess(2);
 	}
+	killProcess(2);
 }
 
 static void processThree () {
-	while (1) {
+	for (int i=0; i<1; i++) {
         ncPrintChar('b');
 		halt(1);
-        ncPrintChar('b');
-		halt(1);
-		blockProcess(3);
+		// blockProcess(3);
 	}
+	killProcess(3);
 }
 
 static void processFour () {
 	while (1) {
         ncPrintChar('c');
 		halt(1);
-        ncPrintChar('c');
-		halt(1);
-        ncPrintChar('c');
-		halt(1);
-        ncPrintChar('c');
-		halt(1);
-		unblockProcess(3);
-        ncPrintChar('c');
-		halt(1);
-        ncPrintChar('c');
-		halt(1);
-		unblockProcess(2);
+		// blockProcess(4);
+		// unblockProcess(3);
+		// unblockProcess(2);
 	}
 }
 
@@ -134,9 +119,9 @@ int main()
 	mem_init((uint64_t)sampleHeapAddress, HEAP_MEMORY_SIZE);
 	initScheduler();
 	
-	addProcess(&processTwo, 0, NULL);
-    addProcess(&processThree, 0, NULL);
-    addProcess(&processFour, 0, NULL);
+	addProcess(&processTwo, 0, NULL, 1);
+    addProcess(&processThree, 0, NULL, 10);
+    addProcess(&processFour, 0, NULL, 10);
 	
 	load_idt();
 	/*

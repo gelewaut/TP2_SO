@@ -4,10 +4,15 @@
 #include <stdint.h>
 #include <lib.h>
 #define PROCESS_SIZE 4*1024
+#define MAX_PRIORITY 10
+//ammount of cicles pririty 1 -> 10 cycles
+#define CYCLES(c) (c<MAX_PRIORITY && c>0) ? (MAX_PRIORITY+1-c) : 1
 
 typedef struct PCB {
     uint64_t pid;
     uint64_t ppid;
+    uint64_t priority;
+    uint64_t cycles;
     int fd[2];
     void * rsp;
     void * rbp;
@@ -60,11 +65,16 @@ typedef struct stackFrame {
 
 void initScheduler();
 void * schedule();
-void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv);
-process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv);
+void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int priority);
+process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int priority);
 process * findProcess(uint64_t pid);
 process * readyProcess();
 void unblockProcess (uint64_t pid);
 void blockProcess (uint64_t pid);
+uint64_t getPID ();
+void changePriority (uint64_t pid, uint64_t priority);
+void killProcess (uint64_t pid);
+void yield();
+process * getProcesses ();
 
 #endif

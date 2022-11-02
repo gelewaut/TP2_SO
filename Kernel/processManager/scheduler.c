@@ -26,7 +26,7 @@ void initScheduler() {
     processes.first = NULL;
     processes.last = NULL;
 
-    baseProcess = newProcess(&firstProcess, 0, NULL);
+    baseProcess = newProcess(&firstProcess, 0, NULL, 10);
 }
 
 void blockProcess (uint64_t pid) {
@@ -59,12 +59,20 @@ process * findProcess(uint64_t pid) {
     return aux;
 }
 
+//modularize to KILL PROCESSES
 process * readyProcess() {
     if (!processes.ready) {
         return NULL;
     }
-    //see if the first is ready
+
     process * previous = processes.first;
+    while (previous->state == KILLED) {
+        processes.first = previous->next;
+        my_free(previous);
+        previous = processes.first; 
+    }
+    
+    //see if the first is ready
     if (previous->state == READY) {
         processes.first = processes.first->next;
         processes.last->next = previous;
@@ -86,6 +94,10 @@ process * readyProcess() {
                 processes.last->next = aux;
                 processes.last = aux;
             }
+        } else if (aux->state == KILLED) {
+            process * toKILL = aux;
+            aux = aux->next;
+            my_free(toKILL);
         } else {
             previous = aux;
             aux = aux->next;
@@ -97,21 +109,14 @@ process * readyProcess() {
 void * schedule(void * oldRsp) {
     if (current != NULL) {
         current->pcb.rsp = oldRsp;
+        if (current->pcb.cycles--) {
+            return oldRsp;
+        } else {
+            current->pcb.cycles = CYCLES(current->pcb.priority);
+        }
     } 
     if (processes.ready) {
         current = readyProcess();
-        //solo un elemento en la lista
-        /*
-        if (processes.first->next == NULL) { 
-            current = processes.first;
-        } else {
-            current = processes.first;
-            processes.first = processes.first->next;
-            processes.last->next = current;
-            current->next = NULL;
-            processes.last = current;
-        }
-        */
     } else {
         current = baseProcess;
     }
@@ -120,8 +125,8 @@ void * schedule(void * oldRsp) {
 }
 
 
-void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv) {
-    process * myProcess = newProcess(entryPoint, argc, argv);
+void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int priority) {
+    process * myProcess = newProcess(entryPoint, argc, argv, priority);
     if (myProcess == NULL)
         return;
     
@@ -135,7 +140,7 @@ void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv) {
     processes.ready++;
 }
 
-process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv) {
+process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int priority) {
     if (entryPoint == NULL)
         return NULL;
     
@@ -148,6 +153,8 @@ process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv) {
     newProcess->pcb.rsp = newProcess->pcb.rbp;
     newProcess->state = READY;
     newProcess->next = NULL;
+    newProcess->pcb.priority = priority;
+    newProcess->pcb.cycles = CYCLES(priority);
 
     stackFrame * aux = (stackFrame *) newProcess->pcb.rbp - 1;
     aux->rsi = argc;
@@ -163,4 +170,44 @@ process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv) {
     newProcess->pcb.rsp = aux->rsp;
     
     return newProcess;
+}
+
+uint64_t getPID () {
+    if(current != NULL) {
+        return current->pcb.pid;
+    }
+    return 0;
+}
+
+void changePriority (uint64_t pid, uint64_t priority) {
+    process * aux = findProcess(pid);
+    if (aux != NULL) {
+        aux->pcb.priority = priority;
+    }
+}
+
+void killProcess (uint64_t pid) {
+    process * aux = findProcess(pid);
+    if (aux != NULL) {
+        if (aux->state == READY) 
+            processes.ready--;
+        aux->state = KILLED;
+    }
+    if (pid == current->pcb.pid) {
+        current->pcb.cycles = 0;
+    }
+    //CALL TIMER TICK
+    halt(1);
+}
+
+void yield() {
+    if (current != NULL) {
+        current->pcb.cycles = 0;
+    }
+    //CALL TIMER TICK
+    halt(1);
+}
+
+process * getProcesses () {
+    return processes.first;
 }
