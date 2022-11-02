@@ -1,6 +1,8 @@
 #include <blockedProcessList.h>
 #include <memoryManager.h>
 #include <scheduler.h>
+#include <lib.h>
+#include <stddef.h>
 
 blockedProcess * blockNewProcess(blockedProcess * first, process * toBlock) {
     blockedProcess * newBlockedProcess = my_malloc(sizeof(blockedProcess));

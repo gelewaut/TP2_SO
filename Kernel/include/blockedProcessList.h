@@ -1,7 +1,7 @@
 #ifndef BLOCKEDPROCESSLIST_H_
 #define BLOCKEDPROCESSLIST_H_
 
-// #include <scheduler.h>
+#include <scheduler.h>
 
 typedef struct blockedProcess {
     struct process * head;
