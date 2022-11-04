@@ -1,7 +1,7 @@
 #include <stdint.h>
 #include <lib.h>
 
-uint32_t strlen(const char * str) {
+uint32_t my_strlen(const char * str) {
 	uint32_t len = 0;
 	while (*str != '\0') {
 		len++;
@@ -9,8 +9,7 @@ uint32_t strlen(const char * str) {
 	return len;
 }
 
-uint32_t strcmp(const char * a, const char * b) {
-	uint32_t i = 0;
+uint32_t my_strcmp(const char * a, const char * b) {
 	while (*a) {
 		if (*a != *b) {
 			break;
@@ -20,21 +19,21 @@ uint32_t strcmp(const char * a, const char * b) {
 	return (uint32_t) (*a - *b);
 }
 
-char * strcpy(const char * source, char * dest) {
-	if (dest == NULL) {
+char * my_strcpy(char * dest, const char * source) {
+	if (source == NULL) {
 		return NULL;
 	}
 	
 	char * ptr = dest;
 	while (*source != '\0') {
-		*ptr == *source;
+		*ptr = *source;
 		ptr++;
 		source++;
 	}
 
 	*ptr = '\0';
 
-	return *dest;
+	return dest;
 }
 
 void * memset(void * destination, int32_t c, uint64_t length)

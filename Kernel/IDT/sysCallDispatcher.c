@@ -3,7 +3,7 @@
 typedef uint64_t (*SysCall) (uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
 // static SysCall sysCalls[10] = { (SysCall)&sys_read, (SysCall)&sys_write, (SysCall)&getRTC};
-static SysCall sysCalls[10] = { 
+static SysCall sysCalls[25] = { 
     (SysCall)&sys_read,  //0
     (SysCall)&sys_write, //1
     (SysCall)&sys_malloc, //2

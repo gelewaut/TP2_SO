@@ -75,7 +75,7 @@ int readPipe (int fd, char * buff, int size) {
     return i;
 }
 
-int writePipe (int fd, char * buff, int size) {
+int writePipe (int fd, const char * buff, int size) {
     pipeContext * aux;
     if (fd%2 == IN || (aux=findPipe(0 , fd)) == NULL)
         return 0;

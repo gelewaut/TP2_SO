@@ -58,23 +58,23 @@ void sys_yield() {
 }
 
 uint64_t sys_semCreate (const char * _name, uint64_t _value) {
-    return sem_create(_name, _value);
+    return (uint64_t) sem_create(_name, _value);
 }
 
 uint64_t sys_semOpen (const char * _name) {
-    return sem_open(_name);
+    return (uint64_t) sem_open(_name);
 }
 
 uint64_t sys_semClose (Semaphore * sem) {
-    return sem_close(sem);
+    return (uint64_t) sem_close(sem);
 }
 
 uint64_t sys_semSignal (Semaphore * sem) {
-    return sem_signal(sem);
+    return (uint64_t) sem_signal(sem);
 }
 
 uint64_t sys_semWait (Semaphore * sem) {
-    return sem_wait(sem);
+    return (uint64_t) sem_wait(sem);
 }
 
 uint64_t sys_createPipe(int id, int r_or_w) {

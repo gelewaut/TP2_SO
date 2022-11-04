@@ -1,4 +1,5 @@
 GLOBAL cpuVendor
+GLOBAL sys_xchg
 
 section .text
 	

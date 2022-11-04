@@ -1,13 +1,15 @@
 #include "../include/semaphore.h"
 #include "../include/lib.h"
 #include "../include/scheduler.h"
+#include <memoryManager.h>
 
 Semaphore *sem_list;
 
+static uint64_t pop_waiting_queue(Semaphore *sem);
 static uint8_t add_sem(Semaphore *sem);
 static uint8_t rem_sem(Semaphore *sem);
-static Semaphore *sem_find(const char * _name);
-static uint8_t unblock_sem(Semaphore *sem);
+static Semaphore *find_sem(const char * _name);
+static uint8_t add_to_waiting_list(Semaphore *sem, uint64_t pid);
 
 void mutex_lock(uint32_t *lock) {
   while (sys_xchg(lock, 1) != 0);
@@ -18,7 +20,7 @@ void mutex_unlock(uint32_t *lock) {
 }
 
 Semaphore *sem_open(const char * _name) {
-  Semaphore *sem = sem_find(_name);
+  Semaphore *sem = find_sem(_name);
   sem->proccesses_attached++;
   return sem;
 }
@@ -80,7 +82,7 @@ static uint8_t add_sem(Semaphore *sem) {
 static uint8_t rem_sem(Semaphore *sem) {
   Semaphore *c_sem = sem_list;
   while (c_sem->next != NULL) {
-    if(strcmp(c_sem->next->name, sem->name) == 0) {
+    if(my_strcmp(c_sem->next->name, sem->name) == 0) {
       c_sem->next = sem->next;
       my_free(sem);
       return 0;
@@ -93,7 +95,7 @@ static uint8_t rem_sem(Semaphore *sem) {
 static Semaphore *find_sem(const char * _name) {
   Semaphore *c_sem = sem_list;
   while (c_sem != NULL) {
-    if (strcmp(c_sem->name, _name) == 0) {
+    if (my_strcmp(c_sem->name, _name) == 0) {
       return c_sem;
     }
   }
@@ -106,11 +108,11 @@ Semaphore *sem_create(const char * _name, uint64_t _value) {
     ncPrintln("Error en malloc.");
     return NULL;
   }
-  if (sem_find(_name) != NULL) {
+  if (find_sem(_name) != NULL) {
     ncPrintln("Semaphore already exists.");
     return NULL;
   }
-  strcpy(_name, sem->name);
+  my_strcpy(sem->name, _name);
   sem->value = _value;
   sem->proccesses_attached = 0;
   sem->lock = 0;
@@ -123,7 +125,7 @@ Semaphore *sem_create(const char * _name, uint64_t _value) {
 
 static uint8_t add_to_waiting_list(Semaphore *sem, uint64_t pid) {
   waiting_list *waiting_pid = my_malloc(sizeof(waiting_list));
-  waiting_pid = pid;
+  waiting_pid->pid = pid;
   waiting_pid->next = NULL;
   
   if (sem->waiting == NULL) {

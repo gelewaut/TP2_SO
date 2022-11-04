@@ -1,5 +1,5 @@
-#ifndef SEMAPHORE_H
-#define SEMAPHORE_H
+#ifndef SEMAPHORES_H_
+#define SEMAPHORES_H_
 
 #include <stdint.h>
 #include <blockedProcessList.h>
@@ -9,11 +9,11 @@
 
 typedef struct waiting_list {
   uint64_t pid;
-  waiting_list *next;
+  struct waiting_list *next;
 } waiting_list;
 
 typedef struct Semaphore {
-  const char name[MAX_SEM_NAME];
+  char name[MAX_SEM_NAME];
   uint64_t value;
   uint16_t listening;
   uint32_t *lock;

@@ -4,7 +4,7 @@
 
 #include <naiveConsole.h>
 #include <memoryManager.h>
-#define NULL 0
+#include <stddef.h>
 #define NALLOC 1024 /* minimo # de unidades por requerir */
 
 typedef long Align; // Para alinear al limite mayor

@@ -1,4 +1,5 @@
 #include <naiveConsole.h>
+#include <inforeg.h>
 
 #define ZERO_EXCEPTION_ID 0
 #define INVALID_OPCODE_ID 6
