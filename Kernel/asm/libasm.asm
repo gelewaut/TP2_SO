@@ -25,3 +25,14 @@ cpuVendor:
 	mov rsp, rbp
 	pop rbp
 	ret
+
+sys_xchg:
+	push rbp
+	mov rbp, rsp
+
+	mov rax, rsi
+	xchg [rdi], eax
+
+	mov rsp, rbp
+	pop rbp
+	ret

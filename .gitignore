@@ -3,6 +3,8 @@
 *.sys
 *.elf
 
+.vscode/
+
 #The images
 *.img
 *.qcow2

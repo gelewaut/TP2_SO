@@ -1,4 +1,24 @@
 #include <stdint.h>
+#include <lib.h>
+
+uint32_t strlen(const char * str) {
+	uint32_t len = 0;
+	while (*str != '\0') {
+		len++;
+	}
+	return len;
+}
+
+uint32_t strcmp(const char * a, const char * b) {
+	uint32_t i = 0;
+	while (*a) {
+		if (*a != *b) {
+			break;
+		}
+		a++; b++;
+	}
+	return (uint32_t) (*a - *b);
+}
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
