@@ -20,6 +20,7 @@ typedef struct Semaphore {
   struct Semaphore *next;
 } Semaphore;
 
+Semaphore *sem_create(const char * _name, uint64_t _value);
 Semaphore *sem_open(const char * _name);
 uint8_t sem_close(Semaphore *sem);
 uint8_t sem_signal(Semaphore *sem);

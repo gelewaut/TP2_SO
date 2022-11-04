@@ -4,7 +4,6 @@
 
 Semaphore *sem_list;
 
-static Semaphore *sem_create(const char * _name, uint64_t value);
 static uint8_t add_sem(Semaphore *sem);
 static uint8_t rem_sem(Semaphore *sem);
 static Semaphore *sem_find(const char * _name);
@@ -20,10 +19,6 @@ void mutex_unlock(uint32_t *lock) {
 
 Semaphore *sem_open(const char * _name) {
   Semaphore *sem = sem_find(_name);
-  if (sem->proccesses_attached >= MAX_WAITING_PROCESSES) {
-    return NULL;
-  }
-
   sem->proccesses_attached++;
   return sem;
 }
@@ -105,7 +100,7 @@ static Semaphore *find_sem(const char * _name) {
   return NULL;
 }
 
-static Semaphore *sem_create(const char * _name, uint64_t _value) {
+Semaphore *sem_create(const char * _name, uint64_t _value) {
   Semaphore *sem = my_malloc(sizeof(Semaphore));
   if (sem == NULL) {
     ncPrintln("Error en malloc.");
