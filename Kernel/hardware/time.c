@@ -1,4 +1,7 @@
 #include <time.h>
+#include <stdint.h>
+#include <naiveConsole.h>
+#include <inforeg.h>
 
 static unsigned long ticks = 0;
 

@@ -86,13 +86,49 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
+/*
+static void processTwo () {
+    for (int i = 0; i<1; i++){
+		ncPrintChar('a');
+		halt(1);
+		// blockProcess(2);
+	}
+	killProcess(2);
+}
+
+static void processThree () {
+	for (int i=0; i<1; i++) {
+        ncPrintChar('b');
+		halt(1);
+		// blockProcess(3);
+	}
+	killProcess(3);
+}
+
+static void processFour () {
+	while (1) {
+        ncPrintChar('c');
+		halt(1);
+		// blockProcess(4);
+		// unblockProcess(3);
+		// unblockProcess(2);
+	}
+}
+*/
+
 int main()
 {	
-	mem_init((uint64_t)sampleHeapAddress, HEAP_MEMORY_SIZE);
+	mem_init((char *)sampleHeapAddress, HEAP_MEMORY_SIZE);
 	initScheduler();
+	
+	addProcess(sampleCodeModuleAddress, 0, NULL, 1, 1);
+	
 	load_idt();
-
 	/*
+	addProcess(&processTwo, 0, NULL, 1);
+    addProcess(&processThree, 0, NULL, 10);
+    addProcess(&processFour, 0, NULL, 10);
+
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");

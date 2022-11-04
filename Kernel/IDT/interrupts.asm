@@ -134,12 +134,12 @@ SECTION .text
 	iretq
 %endmacro
 
-
+;parameters rdi rsi rdx rcx r8 r9
 %macro sysCallHandlerMaster 1
 	pushStateSysCall
 	sti
 
-	mov rcx, rax
+	mov r9, rax
 	call sysCallDispatcher
 
 	push rax

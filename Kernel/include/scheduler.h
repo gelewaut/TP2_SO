@@ -1,13 +1,21 @@
 #ifndef SCHEDULER_H_
-#define SCHECULER_H_
+#define SCHEDULER_H_
 
 #include <stdint.h>
 #include <lib.h>
 #define PROCESS_SIZE 4*1024
+#define MAX_PRIORITY 10
+//ammount of cicles priority 1 -> 10 cycles
+//foreground, cycles + 1
+// #define CYCLES(p) (p<MAX_PRIORITY && p>0) ? (MAX_PRIORITY+1-p) : 1
+#define CYCLES(p,f) (MAX_PRIORITY+f-p)
 
 typedef struct PCB {
     uint64_t pid;
     uint64_t ppid;
+    uint64_t priority;
+    uint64_t cycles;
+    uint64_t foreground;
     int fd[2];
     void * rsp;
     void * rbp;
@@ -59,8 +67,18 @@ typedef struct stackFrame {
 } stackFrame;
 
 void initScheduler();
-void * schedule();
-void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv);
-process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv);
+void * schedule(void * oldRsp);
+void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int priority, int foreground);
+process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int priority, int foreground);
+void changeProcessState (uint64_t pid, State state);
+void listProcess(process * myProcess);
+process * unlistProcess(uint64_t pid);
+process * findReadyProcess ();
+void freeProcess(process * myProcess);
+process * findProcess(uint64_t pid);
+uint64_t getPID ();
+void changePriority (uint64_t pid, uint64_t priority, uint64_t foreground);
+void yield();
+process * getProcesses ();
 
 #endif
