@@ -5,8 +5,6 @@
 #include <blockedProcessList.h>
 #include <naiveConsole.h>
 
-#define MAX_WAITING_PROCESSES 32
-
 typedef struct waiting_list {
   uint64_t pid;
   waiting_list *next;
