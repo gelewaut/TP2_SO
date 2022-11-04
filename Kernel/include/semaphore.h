@@ -13,7 +13,7 @@ typedef struct Semaphore {
   uint16_t listening;
   struct Semaphore *next;
   uint32_t *lock;
-  uint32_t waiting[MAX_WAITING_PROCESSES];
+  int waiting[MAX_WAITING_PROCESSES];
   uint8_t waiting_idx;
   uint32_t proccesses_attached;
 } Semaphore;

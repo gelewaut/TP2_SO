@@ -1,5 +1,7 @@
 #include "../include/semaphore.h"
 #include "../include/lib.h"
+#include "../include/scheduler.h"
+#include "../include/blockedProcessList.h"
 
 Semaphore *sem_list;
 
@@ -7,8 +9,6 @@ static Semaphore *sem_create(const char * _name, uint64_t value);
 static uint8_t add_sem(Semaphore *sem);
 static uint8_t rem_sem(Semaphore *sem);
 static Semaphore *sem_find(const char * _name);
-
-
 static uint8_t unblock_sem(Semaphore *sem);
 
 void mutex_lock(uint32_t *lock) {
@@ -35,7 +35,10 @@ uint8_t sem_wait(Semaphore *sem) {
     sem->value--;
     mutex_unlock(sem->lock);
   } else {
-    // bloquear el proceso
+    uint64_t pid = getPID();
+    sem->waiting[sem->waiting_idx++] = pid;
+    changeProcessState(pid, BLOCKED);
+    release(sem->lock);
   }
   return 1;
 }
@@ -44,24 +47,32 @@ uint8_t sem_signal(Semaphore *sem) {
   mutex_lock(sem->lock);
   sem->value++;
   if (sem->waiting > 0) {
-    // desbloquear el primer proceso bloqueado de la lista de espera
+    uint64_t pid = sem->waiting[0];
+    pop_waiting_queue(sem);
+    changeProcessState(pid, READY);
   }
   mutex_unlock(sem->lock);
-  return 1;
+  return 0;
 }
-uint8_t sem_close(Semaphore * sem);
+
+uint8_t sem_close(Semaphore * sem) {
+  if ((sem->listening--) == 0) {
+    rem_sem(sem);
+  }
+  return 0;
+}
 
 static uint8_t add_sem(Semaphore *sem) {
   if (sem_list == NULL) {
     sem_list = sem;
-    return 1;
+    return 0;
   }
   Semaphore *aux = sem_list;
   while (aux->next != NULL) {
     aux = aux->next;
   }
   aux->next = sem;
-  return 1; 
+  return 0; 
 }
 
 static uint8_t rem_sem(Semaphore *sem) {
@@ -70,11 +81,11 @@ static uint8_t rem_sem(Semaphore *sem) {
     if(strcmp(c_sem->next->name, sem->name) == 0) {
       c_sem->next = sem->next;
       my_free(sem);
-      return 1;
+      return 0;
     }
   }
   // Semaphore wasn't found in the list.
-  return 0;
+  return -1;
 }
 
 static Semaphore *find_sem(const char * _name) {
@@ -99,7 +110,6 @@ static Semaphore *sem_create(const char * _name, uint64_t _value) {
   }
   sem->name = _name;
   sem->value = _value;
-  sem->waiting = 0;
   sem->proccesses_attached = 0;
   sem->lock = 0;
   sem->next = NULL;
