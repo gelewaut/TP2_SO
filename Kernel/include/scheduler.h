@@ -79,6 +79,7 @@ process * findProcess(uint64_t pid);
 uint64_t getPID ();
 void changePriority (uint64_t pid, uint64_t priority, uint64_t foreground);
 void yield();
+process * getCurrentProcess();
 process * getProcesses ();
 
 #endif
