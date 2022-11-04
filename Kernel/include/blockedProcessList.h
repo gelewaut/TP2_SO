@@ -9,6 +9,6 @@ typedef struct blockedProcess {
 } blockedProcess;
 
 blockedProcess * blockNewProcess(blockedProcess * first, process * toBlock);
-blockedProcess * unblockAllProcess (blockedProcess * first);
+blockedProcess * unblockAllProcess(blockedProcess * first);
 
 #endif

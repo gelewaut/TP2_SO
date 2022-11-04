@@ -2,20 +2,24 @@
 #define SEMAPHORE_H
 
 #include <stdint.h>
+#include <blockedProcessList.h>
 #include <naiveConsole.h>
 
 #define MAX_WAITING_PROCESSES 32
 
+typedef struct waiting_list {
+  uint64_t pid;
+  waiting_list *next;
+} waiting_list;
+
 typedef struct Semaphore {
   const char * name;
   uint64_t value;
-  uint16_t waiting;
   uint16_t listening;
-  struct Semaphore *next;
   uint32_t *lock;
-  int waiting[MAX_WAITING_PROCESSES];
-  uint8_t waiting_idx;
+  struct waiting_list *waiting;
   uint32_t proccesses_attached;
+  struct Semaphore *next;
 } Semaphore;
 
 Semaphore *sem_open(const char * _name);

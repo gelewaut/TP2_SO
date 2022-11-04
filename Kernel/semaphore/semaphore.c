@@ -1,7 +1,6 @@
 #include "../include/semaphore.h"
 #include "../include/lib.h"
 #include "../include/scheduler.h"
-#include "../include/blockedProcessList.h"
 
 Semaphore *sem_list;
 
@@ -36,9 +35,9 @@ uint8_t sem_wait(Semaphore *sem) {
     mutex_unlock(sem->lock);
   } else {
     uint64_t pid = getPID();
-    sem->waiting[sem->waiting_idx++] = pid;
     changeProcessState(pid, BLOCKED);
-    release(sem->lock);
+    add_to_waiting_list(sem, pid);
+    mutex_unlock(sem->lock);
   }
   return 1;
 }
@@ -46,13 +45,21 @@ uint8_t sem_wait(Semaphore *sem) {
 uint8_t sem_signal(Semaphore *sem) {
   mutex_lock(sem->lock);
   sem->value++;
-  if (sem->waiting > 0) {
-    uint64_t pid = sem->waiting[0];
-    pop_waiting_queue(sem);
+  if (sem->waiting != NULL) {
+    uint64_t pid = pop_waiting_queue(sem);
     changeProcessState(pid, READY);
   }
   mutex_unlock(sem->lock);
   return 0;
+}
+
+static uint64_t pop_waiting_queue(Semaphore *sem) {
+  if (sem->waiting == NULL) {
+    return 0;
+  }
+  uint64_t pid = sem->waiting->pid;
+  sem->waiting = sem->waiting->next;
+  return pid;
 }
 
 uint8_t sem_close(Semaphore * sem) {
@@ -112,8 +119,26 @@ static Semaphore *sem_create(const char * _name, uint64_t _value) {
   sem->value = _value;
   sem->proccesses_attached = 0;
   sem->lock = 0;
+  sem->waiting = NULL;
   sem->next = NULL;
   add_sem(sem);
 
   return sem;
+}
+
+static uint8_t add_to_waiting_list(Semaphore *sem, uint64_t pid) {
+  waiting_list *waiting_pid = my_malloc(sizeof(waiting_list));
+  waiting_pid = pid;
+  waiting_pid->next = NULL;
+  
+  if (sem->waiting == NULL) {
+    sem->waiting = waiting_pid;
+  } else {
+    waiting_list *c_waiting = sem->waiting;
+    while (c_waiting->next != NULL) {
+      c_waiting = c_waiting->next;
+    }
+    c_waiting->next = waiting_pid;
+  }
+  return 0;
 }
