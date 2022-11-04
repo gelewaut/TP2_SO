@@ -1,12 +1,22 @@
-GLOBAL sys_read
-GLOBAL sys_write
-GLOBAL sys_writeAt
-GLOBAL sys_clock
-GLOBAL sys_timerTick
-GLOBAL sys_infoReg
-GLOBAL sys_printMem
-GLOBAL sys_clearScreen
-GLOBAL sys_readNoStop
+GLOBAL sys_read  //0
+GLOBAL sys_write //1
+GLOBAL sys_malloc //2
+GLOBAL sys_free   //3
+    
+GLOBAL sys_createProcess //4
+GLOBAL sys_killProcess   //5
+GLOBAL sys_getPID        //6
+GLOBAL sys_modifyState   //7
+GLOBAL sys_yield         //8
+    
+GLOBAL sys_semCreate    //9
+GLOBAL sys_semOpen    //10
+GLOBAL sys_semClose    //11
+GLOBAL sys_semSignal    //12
+GLOBAL sys_semWait    //13
+    
+GLOBAL sys_createPipe    //14
+GLOBAL sys_openPipe      //15
 
 section .text
     
@@ -38,57 +48,46 @@ section .text
     pop rbp
 %endmacro
 
+%macro handler_sysCall 1
+    pushAsm
+    mov rax, %1
+    INT 80h
+    popAsm
+    ret
+%endmacro
+
 sys_read:
-    pushAsm
-    mov rax, 0
-    INT 80h
-    popAsm
-    ret
-
-sys_readNoStop:
-    pushAsm
-    mov rax,3
-    INT 80H
-    popAsm
-    ret
-
+    handler_sysCall 0
 sys_write:
-    pushAsm
-    mov rax, 1
-    INT 80h
-    popAsm
-    ret
-sys_writeAt:
-    pushAsm
-    INT 81h
-    popAsm
-    ret
-sys_clock:
-    pushAsm
-    mov rax, 2
-    INT 80h
-    popAsm
-    ret
-
-sys_timerTick:
-    pushAsm
-    INT 83h
-    popAsm
-    ret
-
-sys_infoReg:
-    pushAsm
-    INT 84h
-    popAsm
-    ret
-
-sys_printMem:
-    pushAsm
-    INT 85h
-    popAsm
-    ret
-sys_clearScreen:
-    pushAsm
-    INT 86h
-    popAsm
-    ret
+    handler_sysCall 1
+sys_malloc:
+    handler_sysCall 2
+sys_free:
+    handler_sysCall 3
+    
+sys_createProcess:
+    handler_sysCall 4
+sys_killProcess:
+    handler_sysCall 5
+sys_getPID:
+    handler_sysCall 6
+sys_modifyState:
+    handler_sysCall 7
+sys_yield:
+    handler_sysCall 8
+    
+sys_semCreate:
+    handler_sysCall 9
+sys_semOpen:
+    handler_sysCall 10
+sys_semClose:
+    handler_sysCall 11
+sys_semSignal:
+    handler_sysCall 12
+sys_semWait:
+    handler_sysCall 13
+    
+sys_createPipe:
+    handler_sysCall 14
+sys_openPipe:
+    handler_sysCall 15

@@ -8,11 +8,23 @@ static SysCall sysCalls[10] = {
     (SysCall)&sys_write, //1
     (SysCall)&sys_malloc, //2
     (SysCall)&sys_free,   //3
+    
     (SysCall)&sys_createProcess, //4
     (SysCall)&sys_killProcess,   //5
     (SysCall)&sys_getPID,        //6
     (SysCall)&sys_modifyState,   //7
     (SysCall)&sys_yield,         //8
+    
+    (SysCall)&sys_semCreate,    //9
+    (SysCall)&sys_semOpen,    //10
+    (SysCall)&sys_semClose,    //11
+    (SysCall)&sys_semSignal,    //12
+    (SysCall)&sys_semWait,    //13
+    
+    (SysCall)&sys_createPipe,    //14
+    (SysCall)&sys_openPipe,      //15
+    
+    
     };
 
 uint64_t sysCallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9_rax) {

@@ -3,25 +3,30 @@
 #include <memoryManager.h>
 #include <scheduler.h>
 #include <pipes.h>
+#include "../include/semaphore.h"
 
 uint64_t sys_read(int fd, char * buf, uint64_t count) {
-    if (fd!=0 || count<0)
+    if (count<0)
         return -1;
-    
-    return dump_buffer(buf, count);
+    if (fd == 0) {
+        return dump_buffer(buf, count);
+    }
+    return readPipe(fd, buf, count);
 }
 
 uint64_t sys_write(int fd, const char * buf, uint64_t count) {
     int i;
     
-    //falla si no hay nada en el buffer, o mal fd, o count negativo
-    if (*buf==0 || fd!=0 || count<0)
+    //falla si no hay nada en el buffer, o count negativo
+    if (*buf==0 || count<0)
         return -1;
-
-    for(i=0; i<count; i++) {
-        ncPrintChar(buf[i]);
+    if (fd == 1) {
+        for(i=0; i<count; i++) {
+            ncPrintChar(buf[i]);
+        }
+        return i;
     }
-    return i;
+    return writePipe(fd, buf, count);
 }
 
 void * sys_malloc (uint64_t bytes) {
@@ -52,9 +57,38 @@ void sys_yield() {
     yield();
 }
 
+uint64_t sys_semCreate (const char * _name, uint64_t _value) {
+    return sem_create(_name, _value);
+}
 
+uint64_t sys_semOpen (const char * _name) {
+    return sem_open(_name);
+}
+
+uint64_t sys_semClose (Semaphore * sem) {
+    return sem_close(sem);
+}
+
+uint64_t sys_semSignal (Semaphore * sem) {
+    return sem_signal(sem);
+}
+
+uint64_t sys_semWait (Semaphore * sem) {
+    return sem_wait(sem);
+}
+
+uint64_t sys_createPipe(int id, int r_or_w) {
+    return createPipe(id, r_or_w);
+}
+
+uint64_t sys_openPipe(int id, int r_or_w) {
+    return openPipe(id, r_or_w);
+}
+
+//MISSING PRINT MEM
 //MISSING PRINT PROCESSES
-
+//MISSING PRINT PIPES
+//MISSING PRINT SEMAPHORES
 
 
 /*

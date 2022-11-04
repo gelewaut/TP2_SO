@@ -55,7 +55,7 @@ int readPipe (int fd, char * buff, int size) {
     if (fd%2 == OUT || (aux = findPipe(0 , fd)) == NULL)
         return 0;
     
-    if (aux->bytesToRead == 0){
+    while (aux->bytesToRead == 0){
         aux->first = blockNewProcess(aux->first, getCurrentProcess());
     }
 
@@ -80,7 +80,7 @@ int writePipe (int fd, char * buff, int size) {
     if (fd%2 == IN || (aux=findPipe(0 , fd)) == NULL)
         return 0;
 
-    if (aux->bytesToRead == PIPE_BUFFER_SIZE) {
+    while (aux->bytesToRead == PIPE_BUFFER_SIZE) {
         aux->first = blockNewProcess(aux->first, getCurrentProcess());
     }
 

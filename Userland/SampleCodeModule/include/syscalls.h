@@ -3,32 +3,33 @@
 
 #include <stdint.h>
 
+typedef enum State
+{
+    READY,
+    BLOCKED,
+    KILLED
+} State;
+
+typedef Semaphore;
+
 uint64_t sys_read(int fd, char * buf, uint64_t count);
-
 uint64_t sys_write(int fd, const char * buf, uint64_t count);
+void * sys_malloc (uint64_t bytes);
+void sys_free (void * ap);
 
-uint64_t sys_writeAt(char * buf, uint64_t count, int x, int y);
+void sys_createProcess (void (*entryPoint)(int, char**), int argc, char ** argv, int priority, int foreground);
+void sys_killProcess (uint64_t pid);
+uint64_t sys_getPID ();
+void sys_modifyState (uint64_t pid, State state);
+void sys_yield();
 
-uint64_t sys_readNoStop(uint64_t fd, uint64_t buffer, uint64_t length);
-/*
-    Reg#	  Description
+uint64_t sys_semCreate (const char * _name, uint64_t _value);
+uint64_t sys_semOpen (const char * _name);
+uint64_t sys_semClose (Semaphore * sem);
+uint64_t sys_semSignal (Semaphore * sem);
+uint64_t sys_semWait (Semaphore * sem);
 
-    00        RTC seconds
-    01        RTC seconds alarm
-    02        RTC minutes
-    03        RTC minutes alarm
-    04        RTC hours
-    05        RTC hours alarm
-    06        RTC day of week
-    07        RTC day of month
-    08        RTC month
-    09        RTC year
-*/
-uint64_t sys_clock(uint64_t code);
-
-uint64_t sys_timerTick(void);
-void sys_infoReg(void);
-void sys_printMem(uint64_t * direction);
-void sys_clearScreen(void);
+uint64_t sys_createPipe(int id, int r_or_w);
+uint64_t sys_openPipe(int id, int r_or_w);
 
 #endif
