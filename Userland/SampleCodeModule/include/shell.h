@@ -2,22 +2,32 @@
 #define _SHELL_H_
 
 #include <stdint.h>
+#include <userlibc.h>
+
+#define PROMPT "$>"
+#define MAX_BUFFER 128
+#define MAX_COMMAND_LENGHT 9
+#define MAX_ARGS 1
+#define MAX_ARG_LENGHT 16
+#define NUMBER_OF_COMMANDS 14
+
+#define BACKSPACE 127
+#define ENTER '\n'
+
+#define EXIT_SUCCESS 1
+#define EXIT_FAILURE 0
+
 void init_shell();
 void shell_welcome();
 void shell_loop();
 void shell_read_line();
 void shell_parse_line();
 uint8_t shell_execute();
+
+
 uint8_t isCommand();
-uint8_t runCommand(int8_t cmd);
-uint8_t helpCommand();
-uint8_t timeCommand();
-uint64_t getAdjustedHours();
-uint8_t fortuneCommand();
-uint8_t inforegCommand();
-uint8_t printmemCommand();
-uint8_t divByZeroCommand();
-uint8_t opCodeCommand();
+uint64_t commandDispatcher(uint64_t cmd);
+
 void cleanup();
 void clear_buffer();
 void clear_command_buffer();

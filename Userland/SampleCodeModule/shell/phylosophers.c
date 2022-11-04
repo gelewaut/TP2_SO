@@ -1,19 +1,19 @@
-// #include <stdio.h>
-// #include <stdint.h>
-// #include <phylosophers.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <phylosophers.h>
 
-// #define N 5
-// #define THINKING 2
-// #define HUNGRY 1
-// #define EATING 0
-// #define LEFT (phnum + 4) % N
-// #define RIGHT (phnum + 1) % N
+#define N 5
+#define THINKING 2
+#define HUNGRY 1
+#define EATING 0
+#define LEFT (phnum + 4) % N
+#define RIGHT (phnum + 1) % N
 
-// int state[N];
-// int phil[N] = { 0, 1, 2, 3, 4 };
+int state[N];
+int phil[N] = { 0, 1, 2, 3, 4 };
 
-// // sem_t mutex;
-// // sem_t S[N]; 
+// sem_t mutex;
+// sem_t S[N]; 
 
 // void test(int phnum)
 // {
@@ -96,7 +96,7 @@
 // 	}
 // }
 
-// void run_phylosophers(uint8_t cant)
+void run_phylosophers(uint8_t cant);
 // {
 
 // 	int i;

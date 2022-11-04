@@ -10,7 +10,7 @@ typedef enum State
     KILLED
 } State;
 
-typedef Semaphore;
+typedef uint64_t * Semaphore;
 
 uint64_t sys_read(int fd, char * buf, uint64_t count);
 uint64_t sys_write(int fd, const char * buf, uint64_t count);

@@ -1,22 +1,22 @@
-GLOBAL sys_read  //0
-GLOBAL sys_write //1
-GLOBAL sys_malloc //2
-GLOBAL sys_free   //3
+GLOBAL sys_read
+GLOBAL sys_write
+GLOBAL sys_malloc
+GLOBAL sys_free
     
-GLOBAL sys_createProcess //4
-GLOBAL sys_killProcess   //5
-GLOBAL sys_getPID        //6
-GLOBAL sys_modifyState   //7
-GLOBAL sys_yield         //8
+GLOBAL sys_createProcess
+GLOBAL sys_killProcess
+GLOBAL sys_getPID
+GLOBAL sys_modifyState
+GLOBAL sys_yield
     
-GLOBAL sys_semCreate    //9
-GLOBAL sys_semOpen    //10
-GLOBAL sys_semClose    //11
-GLOBAL sys_semSignal    //12
-GLOBAL sys_semWait    //13
+GLOBAL sys_semCreate
+GLOBAL sys_semOpen
+GLOBAL sys_semClose
+GLOBAL sys_semSignal
+GLOBAL sys_semWait
     
-GLOBAL sys_createPipe    //14
-GLOBAL sys_openPipe      //15
+GLOBAL sys_createPipe
+GLOBAL sys_openPipe
 
 section .text
     

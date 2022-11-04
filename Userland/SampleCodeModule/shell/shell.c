@@ -1,53 +1,32 @@
 #include <shell.h>
 #include <userlibc.h>
 #include <stdint.h>
-#include <syscalls.h>
+#include <commands.h>
 #include <tests.h>
-#include <phylosophers.h>
-
-#define PROMPT "$>"
-#define MAX_BUFFER 128
-#define MAX_COMMAND_LENGHT 9
-#define MAX_ARGS 1
-#define MAX_ARG_LENGHT 16
-#define NUMBER_OF_COMMANDS 8
-
-#define BACKSPACE 127
-#define ENTER '\n'
-
-#define EXIT_SUCCESS 1
-#define EXIT_FAILURE 0
 
 static char shell_buffer[MAX_BUFFER + 1] = {0};
 static int bufferIdx = 0;
 static char command_buffer[MAX_COMMAND_LENGHT + 1] = {0};
 static char args[MAX_ARG_LENGHT + 1] = {0};
 
-static char *valid_commands[NUMBER_OF_COMMANDS] = {
-    "exit",
-    "help",     // 1
-    "time",     // 2
-    "phylo",    // 3
-    "mem",      // 4
-    "divzero",  // 5
-    "opcode",   // 6
-    "ps",       // 7
-    "loop",     // 8
-    "kill",     // 9
-    "nice",     // 10
-    "block",    // 11
-    "sem",      // 12
-    "cat",      // 13
-    "wc",       // 14
-    "pipe"     // 15
-};
+typedef uint64_t (*Command) (char *);
 
-// static uint8_t args_for_command[NUMBER_OF_COMMANDS] = {
-//     0,
-//     0,
-//     0,
-//     0,
-//     0};
+static Command command_functions[NUMBER_OF_COMMANDS] = { 
+    (Command)&helpCommand,  //0
+    (Command)&phyloCommand, //1
+    (Command)&printmemCommand,   //2
+    (Command)&divByZeroCommand, //3
+    (Command)&opCodeCommand,   //4
+    (Command)&psCommand,        //5
+    (Command)&loopCommand,   //6
+    (Command)&killCommand,         //7
+    (Command)&niceCommand,         //8    
+    (Command)&blockCommand,         //9
+    (Command)&semCommand,         //10
+    (Command)&catCommand,         //11
+    (Command)&wcCommand,         //12
+    (Command)&pipeCommand,       //13
+};
 
 void init_shell()
 {
@@ -138,7 +117,7 @@ uint8_t shell_execute()
     int8_t cmd = isCommand(), result = 1;
     if (cmd > 0)
     {
-        result = runCommand(cmd);
+        result = commandDispatcher(cmd - 1);
     }
     else if (cmd == 0)
     {
@@ -164,146 +143,12 @@ uint8_t isCommand()
     return -1;
 }
 
-uint8_t runCommand(int8_t cmd)
-{
-    switch (cmd)
-    {
-    // En cada caso puedo definir si le paso args si es necesario
-    // y cuantos les paso
-    case 1:
-    {
-        return helpCommand();
-        break;
+uint64_t commandDispatcher(uint64_t cmd) {
+    Command command = command_functions[cmd];
+    if (command != 0) {
+        return command(args);
     }
-    case 2:
-    {
-        return timeCommand();
-        break;
-    }
-    case 3:
-    {
-        return phyloCommand();
-        break;
-    }
-    case 4:
-    {
-        return printmemCommand(args);
-        break;
-    }
-    case 5:
-    {
-        return divByZeroCommand();
-        break;
-    }
-    case 6:
-    {
-        return opCodeCommand();
-        break;
-    }
-    }
-    return -1;
-}
-
-uint8_t helpCommand()
-{
-    printf("\nThese are the available commands");
-    for (int i = 0; i < NUMBER_OF_COMMANDS; i++)
-    {
-        putChar('\n');
-        printf(valid_commands[i]);
-    }
-    putChar('\n');
-    return EXIT_SUCCESS;
-}
-
-uint8_t timeCommand()
-{
-    putChar('\n');
-
-    uint64_t hours, minutes, seconds;
-    hours = getAdjustedHours();
-    minutes = sys_clock(2);
-    seconds = sys_clock(0);
-
-    // arreglando esto
-    if (hours < 10){
-        putChar('0');
-    }
-    printDec(hours);
-    putChar(':');
-    if (minutes < 10){
-        putChar('0');
-    }
-    printHex(minutes);
-    putChar(':');
-    if (seconds < 10){
-        putChar('0');
-    }
-    printHex(seconds);
-    putChar(' ');
-    printHex(sys_clock(7));
-    putChar('/');
-    printHex(sys_clock(8));
-    putChar('/');
-    printHex(sys_clock(9));
-
-    return EXIT_SUCCESS;
-}
-
-uint64_t getAdjustedHours()
-{
-    uint64_t gmt_hours = sys_clock(4);
-
-    if (gmt_hours < 3)
-    {
-        return gmt_hours + 21;
-    }
-    return gmt_hours - 3;
-}
-
-uint8_t phyloCommand(){
-    uint8_t c;
-    uint8_t phyloCant = 0;
-    while ((c = getChar()) != ENTER)
-    {
-        printf("PRESIONE 'a' PARA AGREGAR UN FILOSOFO Y 'r' PARA REMOVER UNO, PRESIONE ENTER PARA COMENZAR\n");
-        if(c == 'a'){
-            phyloCant++;
-        }else if (phyloCant != 0 && c == 'r')
-        {
-            phyloCant--;
-        }
-        printf("Cantidad de filosofos: %d\n", phyloCant);        
-    }
-    
-    if(phyloCant > 0){
-        run_phylosophers(phyloCant);
-    }
-
-}
-
-uint8_t printmemCommand(char arg[])
-{
-    int auxArg = strToNum(arg);
-    if (auxArg == -1)
-    {
-        print("\n A printmem SE LE DEBE PASAR UN NUMERO COMO PARAMETRO\n");
-        return EXIT_SUCCESS;
-    }
-    sys_printMem(auxArg);
-    return EXIT_SUCCESS;
-}
-
-uint8_t divByZeroCommand()
-{
-    divByZero();
-    return EXIT_SUCCESS;
-}
-
-uint8_t opCodeCommand()
-{
-    opCodeTest();
-    return EXIT_SUCCESS;
+    return 0;
 }
 
 void cleanup()
