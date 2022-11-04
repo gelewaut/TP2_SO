@@ -5,13 +5,15 @@
 #include <blockedProcessList.h>
 #include <naiveConsole.h>
 
+#define MAX_SEM_NAME 32
+
 typedef struct waiting_list {
   uint64_t pid;
   waiting_list *next;
 } waiting_list;
 
 typedef struct Semaphore {
-  const char * name;
+  const char name[MAX_SEM_NAME];
   uint64_t value;
   uint16_t listening;
   uint32_t *lock;

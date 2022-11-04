@@ -7,6 +7,7 @@
 
 uint32_t strlen(const char * str);
 uint32_t strcmp(const char * a, const char * b);
+char * strcpy(const char * source,  char * dest);
 void * memset(void * destination, int32_t character, uint64_t length);
 void * memcpy(void * destination, const void * source, uint64_t length);
 

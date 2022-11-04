@@ -20,11 +20,27 @@ uint32_t strcmp(const char * a, const char * b) {
 	return (uint32_t) (*a - *b);
 }
 
+char * strcpy(const char * source, char * dest) {
+	if (dest == NULL) {
+		return NULL;
+	}
+	
+	char * ptr = dest;
+	while (*source != '\0') {
+		*ptr == *source;
+		ptr++;
+		source++;
+	}
+
+	*ptr = '\0';
+
+	return *dest;
+}
+
 void * memset(void * destination, int32_t c, uint64_t length)
 {
 	uint8_t chr = (uint8_t)c;
 	char * dst = (char*)destination;
-
 	while(length--)
 		dst[length] = chr;
 

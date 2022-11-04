@@ -110,7 +110,7 @@ Semaphore *sem_create(const char * _name, uint64_t _value) {
     ncPrintln("Semaphore already exists.");
     return NULL;
   }
-  sem->name = _name;
+  strcpy(_name, sem->name);
   sem->value = _value;
   sem->proccesses_attached = 0;
   sem->lock = 0;
