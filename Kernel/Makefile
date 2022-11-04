@@ -1,7 +1,7 @@
 include Makefile.inc
 
 KERNEL=kernel.bin
-SOURCES=$(wildcard *.c) $(wildcard exeptions/*.c) $(wildcard hardware/*.c) $(wildcard IDT/*.c) $(wildcard memoryManager/*.c) $(wildcard processManager/*.c)
+SOURCES=$(wildcard *.c) $(wildcard exeptions/*.c) $(wildcard hardware/*.c) $(wildcard IDT/*.c) $(wildcard memoryManager/*.c) $(wildcard processManager/*.c) $(wildcard semaphore/*.c)
 SOURCES_ASM=$(wildcard asm/*.asm) $(wildcard hardware/*.asm) $(wildcard IDT/*.asm) $(wildcard exeptions/*.asm)
 OBJECTS=$(SOURCES:.c=.o)
 OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
@@ -26,6 +26,6 @@ $(LOADEROBJECT):
 	$(ASM) $(ASMFLAGS) $(LOADERSRC) -o $(LOADEROBJECT)
 
 clean:
-	rm -rf asm/*.o *.o *.bin exeptions/*.o hardware/*.o IDT/*.o memoryManager/*.o *.elf
+	rm -rf asm/*.o *.o *.bin exeptions/*.o hardware/*.o IDT/*.o memoryManager/*.o processManager/*.o semaphore/*.o *.elf
 
 .PHONY: all clean

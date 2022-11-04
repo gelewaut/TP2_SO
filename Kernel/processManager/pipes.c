@@ -2,29 +2,48 @@
 #include <lib.h>
 #include <stddef.h>
 #include <memoryManager.h>
-
-#define IN 0
-#define OUT 1
+#include <scheduler.h>
 
 static pipeContext * pipes = NULL;
 static int newFD = 2;
 
-int pipe (int fd[2]) {
+// 0 read y 1 write
+// id > 0
+int createPipe (int id, int r_or_w) {
+    if (id <= 0)
+        return -1;
+    if(findPipe(id, 0) != NULL)
+        return -1;
+    
     pipeContext * newPipe = my_malloc(sizeof(pipeContext));
     if (newPipe == NULL) 
         return -1;
     
-    fd[IN] = newFD;
+    newPipe->id = id;
     newPipe->fd[IN] = newFD++;
-    fd[OUT] = newFD;
     newPipe->fd[OUT] = newFD++;
-    return 0;
+    newPipe->next = pipes;
+    pipes = newPipe;
+
+    if (r_or_w)
+        return newPipe->fd[OUT];
+    return newPipe->fd[IN];
 }
 
-pipeContext * findPipe (int fd) {
+int openPipe (int id, int r_or_w) {
+    pipeContext * aux = findPipe(id, 0);
+    if (aux != NULL) {
+        if (r_or_w)
+            return aux->fd[OUT];
+        return aux->fd[IN];
+    }
+    return -1;
+}
+
+pipeContext * findPipe (int id, int fd) {
     pipeContext * aux = pipes;
     while (aux != NULL) {
-        if (aux->fd[IN] == fd || aux->fd[OUT] == fd)
+        if (aux->id==id || aux->fd[IN] == fd || aux->fd[OUT] == fd)
             return aux;
         aux = aux->next;
     }
@@ -33,11 +52,11 @@ pipeContext * findPipe (int fd) {
 
 int readPipe (int fd, char * buff, int size) {
     pipeContext * aux;
-    if (fd%2 == OUT || (aux=findPipe(fd)) == NULL)
+    if (fd%2 == OUT || (aux = findPipe(0 , fd)) == NULL)
         return 0;
     
     if (aux->bytesToRead == 0){
-        aux->first = blockNewProcess(aux->first, findProcess(getPID()));
+        aux->first = blockNewProcess(aux->first, getCurrentProcess());
     }
 
     int i;
@@ -58,11 +77,11 @@ int readPipe (int fd, char * buff, int size) {
 
 int writePipe (int fd, char * buff, int size) {
     pipeContext * aux;
-    if (fd%2 == IN || (aux=findPipe(fd)) == NULL)
+    if (fd%2 == IN || (aux=findPipe(0 , fd)) == NULL)
         return 0;
 
     if (aux->bytesToRead == PIPE_BUFFER_SIZE) {
-        aux->first = blockNewProcess(aux->first, findProcess(getPID()));
+        aux->first = blockNewProcess(aux->first, getCurrentProcess());
     }
 
     int i;

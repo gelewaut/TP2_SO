@@ -232,6 +232,10 @@ void yield() {
     halt(1);
 }
 
+process * getCurrentProcess() {
+    return current;
+}
+
 process * getProcesses () {
     return processes.first;
 }
