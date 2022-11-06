@@ -96,7 +96,9 @@ int phil[N] = { 0, 1, 2, 3, 4 };
 // 	}
 // }
 
-void run_phylosophers(uint8_t cant);
+void run_phylosophers(uint64_t cant){
+    return ;
+}
 // {
 
 // 	int i;

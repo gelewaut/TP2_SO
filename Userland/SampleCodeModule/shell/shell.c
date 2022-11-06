@@ -10,24 +10,22 @@ static char command_buffer[MAX_COMMAND_LENGHT + 1] = {0};
 static char * args[MAX_ARG_LENGHT + 1] = {0};
 static uint8_t args_counter = 0;
 
-typedef uint64_t (*Command) (char *);
+typedef uint64_t (*Command) (char **, uint8_t);
 
 static Command command_functions[NUMBER_OF_COMMANDS] = { 
     (Command)&helpCommand,  //0
     (Command)&phyloCommand, //1
     (Command)&printmemCommand,   //2
-    (Command)&divByZeroCommand, //3
-    (Command)&opCodeCommand,   //4
-    (Command)&psCommand,        //5
-    (Command)&loopCommand,   //6
-    (Command)&killCommand,         //7
-    (Command)&niceCommand,         //8    
-    (Command)&blockCommand,         //9
-    (Command)&semCommand,         //10
-    (Command)&catCommand,         //11
-    (Command)&wcCommand,         //12
-    (Command)&pipeCommand,       //13
-    (Command)&filterCommand    //14  
+    (Command)&psCommand,        //3
+    (Command)&loopCommand,   //4
+    (Command)&killCommand,         //5
+    (Command)&niceCommand,         //6   
+    (Command)&blockCommand,         //7
+    (Command)&semCommand,         //8
+    (Command)&catCommand,         //9
+    (Command)&wcCommand,         //10
+    (Command)&pipeCommand,       //11
+    (Command)&filterCommand    //12  
 };
 
 void init_shell()
@@ -146,7 +144,7 @@ uint8_t isCommand()
 uint64_t commandDispatcher(uint64_t cmd) {
     Command command = command_functions[cmd];
     if (command != 0) {
-        return command(args);
+        return command(args, args_counter);
     }
     return 0;
 }

@@ -3,6 +3,6 @@
 #include <stdint.h>
 
 
-void run_phylosophers(uint8_t cant);
+void run_phylosophers(uint64_t cant);
 
 #endif

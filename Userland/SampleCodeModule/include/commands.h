@@ -5,37 +5,35 @@
 #include <shell.h>
 
 static char *valid_commands[NUMBER_OF_COMMANDS+1] = {
-    "exit",
+    "exit",     // 0
     "help",     // 1
     "phylo",    // 2
     "mem",      // 3
-    "divzero",  // 4
-    "opcode",   // 5
-    "ps",       // 6
-    "loop",     // 7
-    "kill",     // 8
-    "nice",     // 9
-    "block",    // 10
-    "sem",      // 11
-    "cat",      // 12
-    "wc",       // 13
-    "pipe"      // 14
+    "ps",       // 4
+    "loop",     // 5
+    "kill",     // 6
+    "nice",     // 7
+    "block",    // 8
+    "sem",      // 9
+    "cat",      // 10
+    "wc",       // 11
+    "pipe",     // 12
+    "filter"    // 13
 };
 
-uint8_t helpCommand();
-uint8_t printmemCommand(uint64_t args[]);
-uint8_t divByZeroCommand();
-uint8_t phyloCommand();
-uint8_t opCodeCommand();
-uint8_t psCommand();
-uint8_t loopCommand();
-uint8_t killCommand();
-uint8_t niceCommand();
-uint8_t blockCommand();
-uint8_t semCommand();
-uint8_t catCommand();
-uint8_t wcCommand();
-uint8_t pipeCommand();
-uint8_t filterCommand();
+uint64_t helpCommand(char *args[], uint64_t args_cant);
+uint64_t printmemCommand(char *args[], uint64_t args_cant);
+uint64_t phyloCommand(char *args[], uint64_t args_cant);
+uint64_t psCommand(char *args[], uint64_t args_cant);
+uint64_t loopCommand(char *args[], uint64_t args_cant);
+uint64_t killCommand(char *args[], uint64_t args_cant);
+uint64_t niceCommand(char *args[], uint64_t args_cant);
+uint64_t blockCommand(char *args[], uint64_t args_cant);
+uint64_t semCommand(char *args[], uint64_t args_cant);
+uint64_t catCommand(char *args[], uint64_t args_cant);
+uint64_t wcCommand(char *args[], uint64_t args_cant);
+uint64_t filterCommand(char *args[], uint64_t args_cant);
+uint64_t pipeCommand(char *args[], uint64_t args_cant);
+
 
 #endif

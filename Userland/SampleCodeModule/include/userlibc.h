@@ -3,6 +3,22 @@
 
 #include <stdint.h>
 
+#define ISSPACE(c) c == ' '
+#define ISDIGIT(c) (c >= '0' && c <= '9')
+#define ISUPPER(c) (c >= 'A' && c <= 'Z')
+#define ISALPHA(c) ((c >= 'a' && c <= 'z') || ISUPPER(c))
+#define ISVOWEL(c) (c== 'a'|| c=='e' || c== 'i' || c=='o' || c=='u' || c== 'A'|| c=='E' || c== 'I' || c=='O' || c=='U')
+#ifndef ULONG_MAX
+#define ULONG_MAX ((unsigned long)(~0L)) /* 0xFFFFFFFF */
+#endif
+#ifndef LONG_MAX
+#define LONG_MAX ((long)(ULONG_MAX >> 1)) /* 0x7FFFFFFF */
+#endif
+#ifndef LONG_MIN
+#define LONG_MIN ((long)(~LONG_MAX)) /* 0x80000000 */
+#endif
+
+
 uint64_t numToStr(char *buf, unsigned long int num, int base);
 uint32_t uintToStr(uint64_t value, char * buffer);
 int strToNum(char *str);

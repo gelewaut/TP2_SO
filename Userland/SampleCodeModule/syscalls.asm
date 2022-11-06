@@ -6,8 +6,9 @@ GLOBAL sys_free
 GLOBAL sys_createProcess
 GLOBAL sys_killProcess
 GLOBAL sys_getPID
-GLOBAL sys_modifyState
+GLOBAL sys_blockProcess
 GLOBAL sys_yield
+GLOBAL sys_changePriority
     
 GLOBAL sys_semCreate
 GLOBAL sys_semOpen
@@ -17,6 +18,13 @@ GLOBAL sys_semWait
     
 GLOBAL sys_createPipe
 GLOBAL sys_openPipe
+
+GLOBAL sys_printMem
+GLOBAL sys_printPipes
+GLOBAL sys_printProcesses
+GLOBAL sys_printSemaphores
+
+GLOBAL sys_clearScreen
 
 section .text
     
@@ -71,23 +79,37 @@ sys_killProcess:
     handler_sysCall 5
 sys_getPID:
     handler_sysCall 6
-sys_modifyState:
+sys_blockProcess:
     handler_sysCall 7
-sys_yield:
+sys_changePriority:
     handler_sysCall 8
+sys_yield:
+    handler_sysCall 9
     
 sys_semCreate:
-    handler_sysCall 9
-sys_semOpen:
     handler_sysCall 10
-sys_semClose:
+sys_semOpen:
     handler_sysCall 11
-sys_semSignal:
+sys_semClose:
     handler_sysCall 12
-sys_semWait:
+sys_semSignal:
     handler_sysCall 13
+sys_semWait:
+    handler_sysCall 14
     
 sys_createPipe:
-    handler_sysCall 14
-sys_openPipe:
     handler_sysCall 15
+sys_openPipe:
+    handler_sysCall 16
+
+sys_printMem:
+    handler_sysCall 17
+sys_printProcesses:
+    handler_sysCall 18
+sys_printSemaphores:
+    handler_sysCall 19
+sys_printPipes:
+    handler_sysCall 20
+
+sys_clearScreen:
+    handler_sysCall 21

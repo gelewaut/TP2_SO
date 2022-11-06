@@ -52,19 +52,7 @@ int string_compare(const char *s1, const char *s2)
 	}
 	return s1[i] - s2[i];
 }
-#define ISSPACE(c) c == ' '
-#define ISDIGIT(c) (c >= '0' && c <= '9')
-#define ISUPPER(c) (c >= 'A' && c <= 'Z')
-#define ISALPHA(c) ((c >= 'a' && c <= 'z') || ISUPPER(c))
-#ifndef ULONG_MAX
-#define ULONG_MAX ((unsigned long)(~0L)) /* 0xFFFFFFFF */
-#endif
-#ifndef LONG_MAX
-#define LONG_MAX ((long)(ULONG_MAX >> 1)) /* 0x7FFFFFFF */
-#endif
-#ifndef LONG_MIN
-#define LONG_MIN ((long)(~LONG_MAX)) /* 0x80000000 */
-#endif
+
 long strtol(const char *nptr, char **endptr, register int base)
 {
 	register const char *s = nptr;
@@ -287,8 +275,7 @@ void cleanBuffer()
 // }
 void clear()
 {
-    char * clear = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-	sys_write(STDOUT, clear, 28);
+    sys_clearScreen();
 }
 uint16_t string_lenght(const char *str)
 {

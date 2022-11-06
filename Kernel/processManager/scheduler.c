@@ -305,9 +305,9 @@ void schedulerInfo() {
         ncPrint(", ");
         ncPrintDec(aux->pcb.pid);
         ncPrint(", ");
-        ncPrintHex(aux->pcb.rsp);
+        ncPrintHex((uint64_t)aux->pcb.rsp);
         ncPrint(", ");
-        ncPrintHex(aux->pcb.rbp);
+        ncPrintHex((uint64_t)aux->pcb.rbp);
         ncPrint(", ");
         ncPrintDec(aux->pcb.priority);
         ncPrint(", ");

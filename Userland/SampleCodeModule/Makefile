@@ -9,9 +9,13 @@ ALL_OBJECTS= $(OBJECTS_ASM) $(OBJECTS)
 
 all: $(MODULE)
 
-$(MODULE): $(SOURCES)  $(OBJECTS) $(OBJECTS_ASM)
-	$(LD) $(LDFLAGS) -T sampleCodeModule.ld -o ../$(MODULE) $(OBJECTS) $(OBJECTS_ASM)
-	$(LD) $(LDFLAGS) -T sampleCodeModule.ld -Wl,--oformat=elf64-x86-64 -o ../0000-sampleCodeModule.elf $(OBJECTS) $(OBJECTS_ASM)
+$(MODULE): $(SOURCES)  $(OBJECTS) $(OBJECTS_ASM) _loader.o
+	$(LD) $(LDFLAGS) -T sampleCodeModule.ld _loader.o -o ../$(MODULE) $(OBJECTS) $(OBJECTS_ASM)
+	$(LD) $(LDFLAGS) -T sampleCodeModule.ld _loader.o --oformat=elf64-x86-64 -o ../0000-sampleCodeModule.elf $(OBJECTS) $(OBJECTS_ASM)
+
+
+_loader.o:_loader.c
+	$(GCC) $(GCCFLAGS) -c _loader.c
 
 %.o: %.c
 	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
