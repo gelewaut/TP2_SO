@@ -7,7 +7,8 @@
 static char shell_buffer[MAX_BUFFER + 1] = {0};
 static int bufferIdx = 0;
 static char command_buffer[MAX_COMMAND_LENGHT + 1] = {0};
-static char args[MAX_ARG_LENGHT + 1] = {0};
+static char * args[MAX_ARG_LENGHT + 1] = {0};
+static uint8_t args_counter = 0;
 
 typedef uint64_t (*Command) (char *);
 
@@ -26,6 +27,7 @@ static Command command_functions[NUMBER_OF_COMMANDS] = {
     (Command)&catCommand,         //11
     (Command)&wcCommand,         //12
     (Command)&pipeCommand,       //13
+    (Command)&filterCommand    //14  
 };
 
 void init_shell()
@@ -65,7 +67,6 @@ void shell_loop()
 void shell_read_line()
 {
     uint8_t c;
-
     while ((c = getChar()) != ENTER)
     {
         if (c == BACKSPACE)
@@ -86,7 +87,6 @@ void shell_read_line()
 
 void shell_parse_line()
 {
-    uint8_t args_counter = 0;
     uint8_t buffer_idx = 0;
     uint8_t aux_idx = 0;
 
@@ -95,7 +95,7 @@ void shell_parse_line()
     while (shell_buffer[buffer_idx])
     {
         token = shell_buffer[buffer_idx++];
-        if (token == ' ')
+        if (token == ' ' && shell_buffer[buffer_idx] != ' ')
         {
             args_counter++;
             aux_idx = 0;
@@ -107,7 +107,7 @@ void shell_parse_line()
         }
         else
         {
-            args[aux_idx++] = token;
+            args[args_counter][aux_idx++] = token;
         }
     }
 }
@@ -173,8 +173,12 @@ void clear_command_buffer()
 
 void clear_args()
 {
-    for (int j = 0; j < MAX_ARG_LENGHT; j++)
+    for (int i = 0; i < args_counter; i++)
     {
-        args[j] = 0;
+        for (int j = 0; j < MAX_ARG_LENGHT; j++)
+        {
+            args[i][j] = 0;
+        }
     }
+    args_counter = 0;
 }
