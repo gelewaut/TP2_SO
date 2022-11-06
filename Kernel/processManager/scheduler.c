@@ -30,7 +30,9 @@ void initScheduler() {
     processes.first = NULL;
     processes.last = NULL;
 
-    int fd[2] = {0,1};
+    int fd[2];
+    fd[0] = 0;
+    fd[1] = 1;
     baseProcess = newProcess(&firstProcess, 0, NULL, fd, 0);
 }
 

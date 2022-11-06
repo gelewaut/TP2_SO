@@ -122,7 +122,10 @@ int main()
 	initScheduler();
 	
 	char * args[] = {"SHELL"};
-	addProcess(sampleCodeModuleAddress, 1, args, 1, 1);
+	int fd[2];
+	fd[0] = 0;
+	fd[1] = 1;
+	addProcess(sampleCodeModuleAddress, 1, args, fd, 1);
 	
 	load_idt();
 	/*

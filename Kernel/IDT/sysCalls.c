@@ -13,7 +13,7 @@ uint64_t sys_read(int fd, char * buf, uint64_t count) {
         return -1;
     }
     
-    if (aux->pcb.fd[fd] == 0) {
+    if (aux->pcb.fd[0] == 0) {
         clear_buffer();
         while(buffer_count()<count) {
             fill_buffer();
@@ -27,23 +27,27 @@ uint64_t sys_read(int fd, char * buf, uint64_t count) {
         return i;
         // return dump_buffer(buf, count);
     }
-    return readPipe(aux->pcb.fd[fd], buf, count);
+    return readPipe(aux->pcb.fd[0], buf, count);
 }
 
 uint64_t sys_write(int fd, const char * buf, uint64_t count) {
     int i;
     
     //falla si no hay nada en el buffer, o count negativo
-    if (*buf==0 || count<0 || fd == 1)
+    if (*buf==0 || count<0 || fd != 1)
         return -1;
     process * aux = getCurrentProcess();
-    if (aux->pcb.fd[fd] == 1) {
+    if (aux == NULL) {
+        return -1;
+    }
+    
+    if (aux->pcb.fd[1] == 1) {
         for(i=0; i<count; i++) {
             ncPrintChar(buf[i]);
         }
         return i;
     }
-    return writePipe(aux->pcb.fd[fd], buf, count);
+    return writePipe(aux->pcb.fd[1], buf, count);
 }
 
 void * sys_malloc (uint64_t bytes) {
