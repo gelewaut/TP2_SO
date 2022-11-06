@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <syscalls.h>
 #include <stdlib.h>
+
 #define BUFFER_SIZE 32
 #define STDIN 0
 #define STDOUT 1

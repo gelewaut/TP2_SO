@@ -36,6 +36,6 @@ uint8_t semCommand();
 uint8_t catCommand();
 uint8_t wcCommand();
 uint8_t pipeCommand();
-
+uint8_t filterCommand();
 
 #endif
