@@ -98,3 +98,40 @@ int writePipe (int fd, const char * buff, int size) {
     
     return i;
 }
+
+void pipeInfo () {
+    ncPrint("\nPipe ID, FDIN, FDOUT, STATE, BLOCKED PROCESSES ID\n");
+    pipeContext * aux = pipes;
+    blockedProcess * pcs;
+    if (aux == NULL) {
+        ncPrint("No Active PIPES\n\n\n");
+        return;
+    }
+    while (aux != NULL) {
+        ncPrintDec(aux->id);
+        ncPrint(", ");
+        ncPrintDec(aux->fd[IN]);
+        ncPrint(", ");
+        ncPrintDec(aux->fd[OUT]);
+        ncPrint(", ");
+        if(aux->bytesToRead == 0) {
+            ncPrint("Empty, ");
+        } else if (aux->bytesToRead == PIPE_BUFFER_SIZE) {
+            ncPrint("Full, ");
+        } else {
+            ncPrint("Can Write and Read, ");
+        }
+        pcs = aux->first;
+        if (pcs == NULL) {
+            ncPrint("No Blocked Processes\n");
+        } else {
+            while (pcs != NULL) {
+                ncPrintDec(pcs->head->pcb.pid);
+                ncPrintChar(' ');
+                pcs = pcs->next;
+            }
+            ncPrintChar('\n');
+        }
+        aux = aux->next;
+    }
+}

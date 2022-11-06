@@ -16,9 +16,10 @@ typedef struct PCB {
     uint64_t priority;
     uint64_t cycles;
     uint64_t foreground;
-    int fd[2];
+    // int fd[2];
     void * rsp;
     void * rbp;
+    char * name;
     uint64_t argc;
     char ** argv;
 } PCB;
@@ -37,6 +38,7 @@ typedef struct process {
 } process;
 
 typedef struct processList {
+    uint64_t count;
     uint64_t ready;
     process * first;
     process * last;
@@ -80,6 +82,7 @@ uint64_t getPID ();
 void changePriority (uint64_t pid, uint64_t priority, uint64_t foreground);
 void yield();
 process * getCurrentProcess();
-process * getProcesses ();
+void copyArgs(process * newProcess, int argc, char ** argv);
+void schedulerInfo();
 
 #endif

@@ -139,3 +139,31 @@ static uint8_t add_to_waiting_list(Semaphore *sem, uint64_t pid) {
   }
   return 0;
 }
+
+void sem_info() {
+  Semaphore * aux = sem_list;
+  waiting_list * sc;
+  ncPrint("Semaphores Name, Value, Blocked Processes\n");
+  if (aux == NULL) {
+    ncPrint("No active semaphores\n\n\n");
+    return;
+  }
+  while (aux != NULL) {
+    ncPrint(aux->name);
+    ncPrint(", ");
+    ncPrintDec(aux->value);
+    ncPrint(", ");
+    sc = aux->waiting;
+    if (sc == NULL) {
+      ncPrint("No Blocked Processes\n");
+    } else {
+      while (sc != NULL) {
+        ncPrintDec(sc->pid);
+        ncPrintChar(' ');
+        sc = sc->next;
+      }
+      ncPrintChar('\n');
+    }
+    aux = aux->next;
+  }
+}

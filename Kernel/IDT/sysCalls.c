@@ -49,8 +49,19 @@ uint64_t sys_getPID () {
     return getPID();
 }
 
-void sys_modifyState (uint64_t pid, State state) {
-    changeProcessState(pid, state);
+void sys_blockProcess (uint64_t pid) {
+    process * aux = findProcess(pid);
+    if (aux == NULL)
+        return;
+    if (aux->state == READY) {
+       return changeProcessState(pid, BLOCKED);
+    } else if (aux->state == BLOCKED){
+        return changeProcessState(pid, READY);
+    }
+}
+
+void sys_changePriority(uint64_t pid, uint64_t priority, uint64_t foreground) {
+    changePriority(pid, priority, foreground);
 }
 
 void sys_yield() {
@@ -83,6 +94,22 @@ uint64_t sys_createPipe(int id, int r_or_w) {
 
 uint64_t sys_openPipe(int id, int r_or_w) {
     return openPipe(id, r_or_w);
+}
+
+void sys_printMem() {
+    print_memSet();
+}
+
+void sys_printProcesses() {
+    schedulerInfo();
+}
+
+void sys_printSemaphores() {
+    sem_info();
+}
+
+void sys_printPipes() {
+    pipeInfo();
 }
 
 //MISSING PRINT MEM

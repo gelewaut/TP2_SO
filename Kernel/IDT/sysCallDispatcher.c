@@ -12,19 +12,25 @@ static SysCall sysCalls[25] = {
     (SysCall)&sys_createProcess, //4
     (SysCall)&sys_killProcess,   //5
     (SysCall)&sys_getPID,        //6
-    (SysCall)&sys_modifyState,   //7
-    (SysCall)&sys_yield,         //8
+    (SysCall)&sys_blockProcess,   //7
+    (SysCall)&sys_changePriority,   //8
+    (SysCall)&sys_yield,         //9
     
-    (SysCall)&sys_semCreate,    //9
-    (SysCall)&sys_semOpen,    //10
-    (SysCall)&sys_semClose,    //11
-    (SysCall)&sys_semSignal,    //12
-    (SysCall)&sys_semWait,    //13
+    (SysCall)&sys_semCreate,    //10
+    (SysCall)&sys_semOpen,    //11
+    (SysCall)&sys_semClose,    //12
+    (SysCall)&sys_semSignal,    //13
+    (SysCall)&sys_semWait,    //14
     
-    (SysCall)&sys_createPipe,    //14
-    (SysCall)&sys_openPipe,      //15
+    (SysCall)&sys_createPipe,    //15
+    (SysCall)&sys_openPipe,      //16
+
+    (SysCall)&sys_printMem,      //17
+    (SysCall)&sys_printProcesses,  //18
+    (SysCall)&sys_printSemaphores, //19
+    (SysCall)&sys_printPipes,     //20
     
-    
+    (SysCall)&ncClear,            //21
     };
 
 uint64_t sysCallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9_rax) {

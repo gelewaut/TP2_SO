@@ -108,30 +108,41 @@ void my_free(void *ap ){
       freep = p;
 }
 
-/*
+
 void print_memSet(){
     long long idx = 1;
     Header *original, *current;
     original = current = freep;
     int flag = 1;
 
-    print("%s %x %s", "Total memory:        ", total_units * sizeof(Header), "\n\n");
+    ncPrint("Total memory: ");
+    ncPrintHex(total_units * sizeof(Header));
+    ncPrintChar('\n');
+    // print("%s %x %s", "Total memory:        ", total_units * sizeof(Header), "\n\n");
     if (freep == NULL)
-        print("%s", "    No free memory\n");
+        ncPrint("No free memory\n");
     while (current != original || flag)
     {
         flag = 0;
-        print("%s", "-------------------------------\n");
-        print("%s %x %s", "        Base:        ", (uint64_t)current, "\n");
-        print("%s %x %s", "        Free memory: ", (current->s.size), "\n");
-        print("%s", "-------------------------------\n");
+        ncPrint("-------------------------------\n");
+        ncPrint("Base: ");
+        ncPrintHex((uint64_t)current);
+        ncPrintChar('\n');
+        ncPrint("Free Memory: ");
+        ncPrintHex((current->s.size));
+        ncPrintChar('\n');
+        ncPrint("-------------------------------\n");
+        
+        // print("%s %x %s", "        Base:        ", (uint64_t)current, "\n");
+        // print("%s %x %s", "        Free memory: ", (current->s.size), "\n");
+        // print("%s", "-------------------------------\n");
         current = current->s.ptr;
         idx++;
     }
 
-    print("%s", "\n\n");
+    ncPrint("\n\n");
 
 }
-*/
+
 
 // #endif

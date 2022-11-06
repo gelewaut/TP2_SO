@@ -23,6 +23,7 @@ static void firstProcess() {
 void initScheduler() {
     
     processes.ready = 0;
+    processes.count = 0;
     processes.first = NULL;
     processes.last = NULL;
 
@@ -72,6 +73,8 @@ process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, in
         newProcess->pcb.ppid = 0;
     }
 
+    copyArgs(newProcess, argc, argv);
+
     newProcess->pcb.pid = ++Next_PID;
     newProcess->pcb.rbp = newProcess+PROCESS_SIZE-1;
     newProcess->pcb.rsp = newProcess->pcb.rbp;
@@ -82,9 +85,9 @@ process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, in
     newProcess->pcb.cycles = CYCLES(newProcess->pcb.priority , newProcess->pcb.foreground);
 
     stackFrame * aux = (stackFrame *) newProcess->pcb.rbp - 1;
-    aux->rsi = argc;
+    aux->rsi = newProcess->pcb.argc;
     aux->rdi = (uint64_t) entryPoint;
-    aux->rdx = (uint64_t) argv;
+    aux->rdx = (uint64_t) newProcess->pcb.argv;
     aux->rip = (uint64_t) wrapper;
     aux->rsp = (uint64_t) aux;
     aux->rbp = (uint64_t) newProcess->pcb.rbp;
@@ -95,6 +98,47 @@ process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, in
     newProcess->pcb.rsp = (void *)aux->rsp;
     
     return newProcess;
+}
+
+void copyArgs(process * newProcess, int argc, char ** argv) {
+    if (argc > 0) {
+        newProcess->pcb.name = my_malloc(my_strlen(argv[0]));
+        if (newProcess->pcb.name != NULL) {
+            newProcess->pcb.name = my_strcpy (newProcess->pcb.name, argv[0]);
+        } else {
+            newProcess->pcb.argc = 0;
+            newProcess->pcb.argv = NULL;
+            return;
+        }
+    }
+    int i, flag=1;
+
+    char ** args = my_malloc(sizeof(char *) * argc-1);
+    if (args != NULL) {
+        for (i=0; i<argc-1 && flag; i++) {
+            args[i] = my_malloc(my_strlen(argv[i+1]));
+            if (args[i] != NULL) {
+                args[i] = my_strcpy(args[i], argv[i+1]);
+            } else {
+                flag = 0;
+            }
+        }
+        //couldnt copy the argv
+        if (flag == 0) {
+            for (int j=0; j<i; j++) {
+                my_free(args[j]);
+            }
+            my_free(args);
+            newProcess->pcb.argc = 0;
+            newProcess->pcb.argv = NULL;
+        } else {
+            newProcess->pcb.argc = i;
+            newProcess->pcb.argv = args;
+        }
+    } else {
+        newProcess->pcb.argc = 0;
+        newProcess->pcb.argv = NULL;
+    }
 }
 
 void changeProcessState (uint64_t pid, State state) {
@@ -130,6 +174,7 @@ void listProcess(process * myProcess) {
 
     if (myProcess->state == READY)
         processes.ready++;
+    processes.count++;
 }
 
 process * unlistProcess(uint64_t pid) {
@@ -145,6 +190,7 @@ process * unlistProcess(uint64_t pid) {
         //check if it is the last one
         // if (previous->next == NULL)
         //     processes.last == previous->next;
+        processes.ready--;
         return previous;
     }
 
@@ -158,6 +204,8 @@ process * unlistProcess(uint64_t pid) {
             //check if it the last one
             if (aux->next == NULL)
                 processes.last = previous;
+            
+            processes.count--;
             return aux;
         }
         previous = aux;
@@ -174,6 +222,7 @@ process * findReadyProcess () {
     if (previous->state == READY) {
         processes.first = previous->next;
         processes.ready--;
+        processes.count--;
         return previous;
     }
 
@@ -186,6 +235,7 @@ process * findReadyProcess () {
             //check if it is the last one
             if (aux->next == NULL)
                 processes.last = previous;
+            processes.count--;
             return aux;
         }
         previous = aux;
@@ -196,6 +246,11 @@ process * findReadyProcess () {
 
 void freeProcess(process * myProcess) {
     //Free everything inside myProcess
+    my_free(myProcess->pcb.name);
+    for (int i=0; i<myProcess->pcb.argc; i++) {
+        my_free(myProcess->pcb.argv[i]);
+    }
+    my_free(myProcess->pcb.argv);
     my_free(myProcess);
 }
 
@@ -236,92 +291,35 @@ process * getCurrentProcess() {
     return current;
 }
 
-process * getProcesses () {
-    return processes.first;
-}
 
-
-
-/*
-TO ELIMINATE
-void blockProcess (uint64_t pid) {
-    process * aux = findProcess(pid);
-    if (aux != NULL) {
-        aux->state = BLOCKED;
-        processes.ready--;
-        //CALL TIMER TICK
-        halt(1);
+//process id, name, stack, base pointer, state, priority, foreground
+void schedulerInfo() {
+    process * aux = processes.first;
+    ncPrint("\nProcess Name, ID, SP, BP, Priority, State\n");
+    if (aux == NULL) {
+        ncPrint("Couldnt get Processes");
+        return;
     }
-}
-
-void unblockProcess (uint64_t pid) {
-    process * aux = findProcess(pid);
-    if (aux != NULL) {
-        aux->state = READY;
-        processes.ready++;
-        //CALL TIMER TICK
-        halt(1);
-    }
-}
-
-void killProcess (uint64_t pid) {
-    process * aux = findProcess(pid);
-    if (aux != NULL) {
-        if (aux->state == READY) 
-            processes.ready--;
-        aux->state = KILLED;
-    }
-    if (pid == current->pcb.pid) {
-        current->pcb.cycles = 0;
-    }
-    //CALL TIMER TICK
-    halt(1);
-}
-
-process * readyProcess() {
-    if (!processes.ready) {
-        return NULL;
-    }
-
-    process * previous = processes.first;
-    while (previous->state == KILLED) {
-        processes.first = previous->next;
-        my_free(previous);
-        previous = processes.first; 
-    }
-    
-    //see if the first is ready
-    if (previous->state == READY) {
-        processes.first = processes.first->next;
-        processes.last->next = previous;
-        previous->next = NULL;
-        processes.last = previous;
-        return previous;
-    }
-
-    process * aux = previous->next;
-    int found = 0;
-
-    while ( aux!=NULL && !found ) {
+    while (aux != NULL) {
+        ncPrint(aux->pcb.name);
+        ncPrint(", ");
+        ncPrintDec(aux->pcb.pid);
+        ncPrint(", ");
+        ncPrintHex(aux->pcb.rsp);
+        ncPrint(", ");
+        ncPrintHex(aux->pcb.rbp);
+        ncPrint(", ");
+        ncPrintDec(aux->pcb.priority);
+        ncPrint(", ");
         if (aux->state == READY) {
-            found = 1;
-            //watch if ready is the last one
-            if (aux->pcb.pid != processes.last->pcb.pid) {
-                previous->next = aux->next;
-                aux->next = NULL;
-                processes.last->next = aux;
-                processes.last = aux;
-            }
-        } else if (aux->state == KILLED) {
-            process * toKILL = aux;
-            aux = aux->next;
-            my_free(toKILL);
+            ncPrintChar('R');
+        } else if (aux->state == BLOCKED) {
+            ncPrintChar('B');
         } else {
-            previous = aux;
-            aux = aux->next;
+            ncPrintChar('K');
         }
+        ncPrintChar('\n');
+        aux = aux->next;
     }
-    return aux;
+    return;
 }
-*/
-

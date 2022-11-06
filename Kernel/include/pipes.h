@@ -23,5 +23,6 @@ int openPipe (int id, int r_or_w);
 pipeContext * findPipe (int id, int fd);
 int readPipe (int fd, char * buff, int size);
 int writePipe (int fd, const char * buff, int size);
+void pipeInfo();
 
 #endif
