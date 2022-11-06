@@ -25,16 +25,12 @@ uint64_t helpCommand(char *args[], uint64_t args_cant)
 
 uint64_t printmemCommand(char *args[], uint64_t args_cant)
 {
-    if(args_cant == 1 ){
-        uint64_t auxArg = strToNum(args[0]);
-        if (auxArg != -1 )
-        {
-            sys_printMem();
-            return EXIT_SUCCESS;
-        }
+    if(args_cant == 0 ){
+        sys_printMem();
+        return EXIT_SUCCESS;
     }
     
-    printf("\n El comando mem recibe un numero como argumento.\n");
+    printf("\n El comando mem no recibe argumentos.\n");
     return EXIT_FAILURE;
 }
 
@@ -63,10 +59,19 @@ uint64_t psCommand(char *args[], uint64_t args_cant){
 }
 
 uint64_t loopCommand(char *args[], uint64_t args_cant){
-    if(args_cant == 0){
-        // uint64_t pid = sys_getPID();
-        return EXIT_SUCCESS;  
-    }
+    // if(args_cant == 0){
+    //     int t = 0;
+    //     long pid = my_getpid();
+
+    //     while(1){
+    //         t = ticks();
+    //         if(t % 18 == 0 ) {
+    //             printf("PID: %d\n", pid);
+    //         }  
+    //     }
+            
+    //     return EXIT_SUCCESS;  
+    // }
 
     printf("\n El comando loop no recibe argumentos.\n");
     return EXIT_FAILURE; 
@@ -144,22 +149,30 @@ uint64_t catCommand(char *args[], uint64_t args_cant){
 }
 
 uint64_t wcCommand(char *args[], uint64_t args_cant){
-    if(args_cant > 0){
-        int count = 1;
+    if(args_cant == 0){
+        int count = 1, bufferIdx = 0;
         char c = 0;
-
-        printf("Linea: %d \n", count);
-        while (1)
+        printf("\nPresione ESC para volver a la shell\n");
+        while ((c = getChar()) != 27)
         {
-            c = getChar();
-            putChar(c);
-            if (c == '\n')
-            {
-                count++;
-                printf("Linea: %d \n", count);
+            if (c == BACKSPACE){
+                if (bufferIdx > 0){
+                    putChar(c);
+                    bufferIdx--;
+                }
             }
-            c = 0;
+            else {
+                putChar(c);
+                bufferIdx++;
+                if (c == '\n'){
+                    count++;
+                    bufferIdx = 0;
+                }
+            }
         }
+        char buf[10];
+        numToStr(count, buf, 10);
+        printf("\nHay %s lineas \n", buf);
 
         return EXIT_SUCCESS; 
     }
@@ -194,3 +207,37 @@ uint64_t pipeCommand(char *args[], uint64_t args_cant){
     printf("\n El comando pipe no recibe argumentos.\n");
     return EXIT_FAILURE;    
 }
+
+//comandos para los tests
+
+// void testMM(int argc, char ** argv){
+//     if(argc != 2){
+//         printf("Cantidad de parametros invalida. Metodo de uso: test_mm <MAX_MEMORY>\n");
+//         return;
+//     }
+//     test_mm(1, &argv[1]);
+// }
+
+// void testPrio(int argc, char ** argv){
+//     if(argc != 1){
+//         printf("Cantidad de parametros invalida. Metodo de uso: test_prio\n");
+//         return;
+//     }
+//     test_prio();
+// }
+
+// void testPCS(int argc, char ** argv){
+//     if(argc != 2){
+//         printf("Cantidad de parametros invalida. Metodo de uso: test_processes <MAX_PROCESSES>\n");
+//         return;
+//     }
+//     test_processes(1, &argv[1]); 
+// }
+// void testSync(int argc, char ** argv){
+//     if(argc != 3){
+//         printf("Cantidad de parametros invalida. Metodo de uso: test_sync <n> <use_sem>\n");
+//         return;
+//     }
+//     char * argAux [2]={argv[1], argv[2]};
+//     test_sync(2, argAux);
+// }

@@ -19,7 +19,7 @@
 #endif
 
 
-uint64_t numToStr(char *buf, unsigned long int num, int base);
+uint64_t numToStr(uint64_t value, char * buffer, uint32_t base);
 uint32_t uintToStr(uint64_t value, char * buffer);
 int strToNum(char *str);
 int string_compare(const char *s1, const char *s2);

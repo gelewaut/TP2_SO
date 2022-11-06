@@ -15,7 +15,7 @@
 #define ENTER '\n'
 
 #define EXIT_SUCCESS 1
-#define EXIT_FAILURE 0
+#define EXIT_FAILURE 2
 
 void init_shell();
 void shell_welcome();

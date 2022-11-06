@@ -13,6 +13,7 @@
 #define CLOCK_SECONDS 2
 static char buffer[BUFFER_SIZE] = {0};
 static char hexArray[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+/*
 uint64_t numToStr(char *buf, unsigned long int num, int base)
 {
 	cleanBuffer();
@@ -30,6 +31,41 @@ uint64_t numToStr(char *buf, unsigned long int num, int base)
 	buf = &buffer[i + 1];
 	return BUFFER_SIZE - (i + 2);
 }
+*/
+
+uint64_t numToStr(uint64_t value, char * buffer, uint32_t base)
+{
+	char *p = buffer;
+	char *p1, *p2;
+	uint32_t digits = 0;
+
+	//Calculate characters for each digit
+	do
+	{
+		uint32_t remainder = value % base;
+		*p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
+		digits++;
+	}
+	while (value /= base);
+
+	// Terminate string in buffer.
+	*p = 0;
+
+	//Reverse string in buffer.
+	p1 = buffer;
+	p2 = p - 1;
+	while (p1 < p2)
+	{
+		char tmp = *p1;
+		*p1 = *p2;
+		*p2 = tmp;
+		p1++;
+		p2--;
+	}
+
+	return digits;
+}
+
 int strToNum(char *str)
 {
 	int num = 0;

@@ -6,10 +6,21 @@
 #include "../include/semaphore.h"
 
 uint64_t sys_read(int fd, char * buf, uint64_t count) {
-    if (count<0)
+    if (count<=0)
         return -1;
     if (fd == 0) {
-        return dump_buffer(buf, count);
+        clear_buffer();
+        while(buffer_count()<count) {
+            fill_buffer();
+        }
+        char * bufferAux = get_buffer();
+        int i;
+        for (i=0; i<count; i++) {
+            buf[i] = bufferAux[i];
+        }
+        clear_buffer();
+        return i;
+        // return dump_buffer(buf, count);
     }
     return readPipe(fd, buf, count);
 }

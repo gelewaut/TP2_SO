@@ -11,13 +11,16 @@ static process * baseProcess = NULL;
 
 static void wrapper(void (*entryPoint)(int, char**), int argc, char ** argv) {
     (*entryPoint)(argc,argv);
-    // exit();
+    exit();
 }
 
 static void firstProcess() {
     while(1)
-        // halt(1);
-        ncPrintChar('.');
+        halt(1);
+}
+
+void exit() {
+    changeProcessState(current->pcb.pid, KILLED);
 }
 
 void initScheduler() {
@@ -102,14 +105,14 @@ process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, in
 
 void copyArgs(process * newProcess, int argc, char ** argv) {
     if (argc > 0) {
-        newProcess->pcb.name = my_malloc(my_strlen(argv[0]));
-        if (newProcess->pcb.name != NULL) {
-            newProcess->pcb.name = my_strcpy (newProcess->pcb.name, argv[0]);
-        } else {
-            newProcess->pcb.argc = 0;
-            newProcess->pcb.argv = NULL;
-            return;
-        }
+        my_strcpy(newProcess->pcb.name, argv[0]);
+        // newProcess->pcb.name = my_malloc(my_strlen(argv[0]));
+        // if (newProcess->pcb.name != NULL) {
+            // newProcess->pcb.name = my_strcpy (newProcess->pcb.name, argv[0]);
+    } else {
+        newProcess->pcb.argc = 0;
+        newProcess->pcb.argv = NULL;
+        return;
     }
     int i, flag=1;
 
@@ -246,7 +249,7 @@ process * findReadyProcess () {
 
 void freeProcess(process * myProcess) {
     //Free everything inside myProcess
-    my_free(myProcess->pcb.name);
+    // my_free(myProcess->pcb.name);
     for (int i=0; i<myProcess->pcb.argc; i++) {
         my_free(myProcess->pcb.argv[i]);
     }

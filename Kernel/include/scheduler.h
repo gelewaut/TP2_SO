@@ -19,7 +19,7 @@ typedef struct PCB {
     // int fd[2];
     void * rsp;
     void * rbp;
-    char * name;
+    char name[30];
     uint64_t argc;
     char ** argv;
 } PCB;
@@ -84,5 +84,6 @@ void yield();
 process * getCurrentProcess();
 void copyArgs(process * newProcess, int argc, char ** argv);
 void schedulerInfo();
+void exit();
 
 #endif

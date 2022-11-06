@@ -121,7 +121,8 @@ int main()
 	mem_init((char *)sampleHeapAddress, HEAP_MEMORY_SIZE);
 	initScheduler();
 	
-	addProcess(sampleCodeModuleAddress, 0, NULL, 1, 1);
+	char * args[] = {"SHELL"};
+	addProcess(sampleCodeModuleAddress, 1, args, 1, 1);
 	
 	load_idt();
 	/*
