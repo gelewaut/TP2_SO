@@ -30,7 +30,8 @@ void initScheduler() {
     processes.first = NULL;
     processes.last = NULL;
 
-    baseProcess = newProcess(&firstProcess, 0, NULL, MAX_PRIORITY, 0);
+    int fd[2] = {0,1};
+    baseProcess = newProcess(&firstProcess, 0, NULL, fd, 0);
 }
 
 void * schedule(void * oldRsp) {
@@ -52,15 +53,16 @@ void * schedule(void * oldRsp) {
     return current->pcb.rsp;
 }
 
-void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int priority, int foreground) {
-    process * myProcess = newProcess(entryPoint, argc, argv, priority, foreground);
+uint64_t addProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground) {
+    process * myProcess = newProcess(entryPoint, argc, argv, fd, foreground);
     if (myProcess == NULL)
-        return;
+        return 0;
 
     listProcess (myProcess);
+    return myProcess->pcb.pid;
 }
 
-process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int priority, int foreground) {
+process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground) {
     if (entryPoint == NULL)
         return NULL;
     
@@ -81,9 +83,11 @@ process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, in
     newProcess->pcb.pid = ++Next_PID;
     newProcess->pcb.rbp = newProcess+PROCESS_SIZE-1;
     newProcess->pcb.rsp = newProcess->pcb.rbp;
+    newProcess->pcb.fd[0] = fd[0];
+    newProcess->pcb.fd[1] = fd[1];
     newProcess->state = READY;
     newProcess->next = NULL;
-    newProcess->pcb.priority = ( (priority > 0 && priority <= 10) ? priority : 1);
+    newProcess->pcb.priority = 1;
     newProcess->pcb.foreground = (foreground>0 ? 1:0);
     newProcess->pcb.cycles = CYCLES(newProcess->pcb.priority , newProcess->pcb.foreground);
 
@@ -298,7 +302,7 @@ process * getCurrentProcess() {
 //process id, name, stack, base pointer, state, priority, foreground
 void schedulerInfo() {
     process * aux = processes.first;
-    ncPrint("\nProcess Name, ID, SP, BP, Priority, State\n");
+    ncPrint("\nProcess Name, ID, SP, BP, FDIN, FDOUT, Priority, State\n");
     if (aux == NULL) {
         ncPrint("Couldnt get Processes");
         return;
@@ -311,6 +315,10 @@ void schedulerInfo() {
         ncPrintHex((uint64_t)aux->pcb.rsp);
         ncPrint(", ");
         ncPrintHex((uint64_t)aux->pcb.rbp);
+        ncPrint(", ");
+        ncPrintDec(aux->pcb.fd[0]);
+        ncPrint(", ");
+        ncPrintDec(aux->pcb.fd[1]);
         ncPrint(", ");
         ncPrintDec(aux->pcb.priority);
         ncPrint(", ");

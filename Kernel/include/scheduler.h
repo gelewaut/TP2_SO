@@ -16,7 +16,7 @@ typedef struct PCB {
     uint64_t priority;
     uint64_t cycles;
     uint64_t foreground;
-    // int fd[2];
+    int fd[2];
     void * rsp;
     void * rbp;
     char name[30];
@@ -70,8 +70,8 @@ typedef struct stackFrame {
 
 void initScheduler();
 void * schedule(void * oldRsp);
-void addProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int priority, int foreground);
-process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int priority, int foreground);
+uint64_t addProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground);
+process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground);
 void changeProcessState (uint64_t pid, State state);
 void listProcess(process * myProcess);
 process * unlistProcess(uint64_t pid);

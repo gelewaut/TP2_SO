@@ -11,7 +11,7 @@ void * sys_malloc (uint64_t bytes);
 void sys_free (void * ap);
 void sys_printMem();
 
-void sys_createProcess (void (*entryPoint)(int, char**), int argc, char ** argv, int priority, int foreground);
+uint64_t sys_createProcess (void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground);
 void sys_killProcess (uint64_t pid);
 uint64_t sys_getPID ();
 void sys_modifyState (uint64_t pid);

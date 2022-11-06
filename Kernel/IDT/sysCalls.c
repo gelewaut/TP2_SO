@@ -6,9 +6,14 @@
 #include "../include/semaphore.h"
 
 uint64_t sys_read(int fd, char * buf, uint64_t count) {
-    if (count<=0)
+    if (count<=0 || fd != 0)
         return -1;
-    if (fd == 0) {
+    process * aux = getCurrentProcess();
+    if (aux == NULL) {
+        return -1;
+    }
+    
+    if (aux->pcb.fd[fd] == 0) {
         clear_buffer();
         while(buffer_count()<count) {
             fill_buffer();
@@ -22,22 +27,23 @@ uint64_t sys_read(int fd, char * buf, uint64_t count) {
         return i;
         // return dump_buffer(buf, count);
     }
-    return readPipe(fd, buf, count);
+    return readPipe(aux->pcb.fd[fd], buf, count);
 }
 
 uint64_t sys_write(int fd, const char * buf, uint64_t count) {
     int i;
     
     //falla si no hay nada en el buffer, o count negativo
-    if (*buf==0 || count<0)
+    if (*buf==0 || count<0 || fd == 1)
         return -1;
-    if (fd == 1) {
+    process * aux = getCurrentProcess();
+    if (aux->pcb.fd[fd] == 1) {
         for(i=0; i<count; i++) {
             ncPrintChar(buf[i]);
         }
         return i;
     }
-    return writePipe(fd, buf, count);
+    return writePipe(aux->pcb.fd[fd], buf, count);
 }
 
 void * sys_malloc (uint64_t bytes) {
@@ -48,8 +54,8 @@ void sys_free (void * ap) {
     my_free(ap);
 }
 
-void sys_createProcess (void (*entryPoint)(int, char**), int argc, char ** argv, int priority, int foreground) {
-    addProcess(entryPoint, argc, argv, priority, foreground);
+uint64_t sys_createProcess (void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground) {
+    return addProcess(entryPoint, argc, argv, fd, foreground);
 }
 
 void sys_killProcess (uint64_t pid) {
