@@ -16,15 +16,17 @@ uint64_t test_mm(uint64_t args_cant, char *args[]){
     uint32_t total;
     uint64_t max_memory;
 
-    if (args_cant != 1) return -1;
+    // if (args_cant != 1) return -1;
 
-    if ((max_memory = satoi(args[0])) <= 0) {
-      return -1;
-    }
+    // if ((max_memory = satoi(args[0])) <= 0) {
+      // return -1;
+    // }
+
+    max_memory = 64*1024*1024;
 
     printf("\nComienzo del testeo de memory manager.\n");
 
-    while (1){
+    // while (1){
       rq = 0;
       total = 0;
 
@@ -43,7 +45,7 @@ uint64_t test_mm(uint64_t args_cant, char *args[]){
       uint32_t i;
       for (i = 0; i < rq; i++)
         if (mm_rqs[i].address){
-          memset(mm_rqs[i].address, i, mm_rqs[i].size);
+          memorySet(mm_rqs[i].address, i, mm_rqs[i].size);
         }
 
       // Check
@@ -59,5 +61,5 @@ uint64_t test_mm(uint64_t args_cant, char *args[]){
         if (mm_rqs[i].address) {
           sys_free(mm_rqs[i].address);
         }
-    } 
+    // } 
 }

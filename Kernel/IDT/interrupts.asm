@@ -64,7 +64,6 @@ SECTION .text
 %endmacro
 
 %macro pushStateSysCall 0
-	push rax
 	push rbx
 	push rcx
 	push rdx
@@ -96,7 +95,6 @@ SECTION .text
 	pop rdx
 	pop rcx
 	pop rbx
-	pop rax
 %endmacro
 
 %macro irqHandlerMaster 1

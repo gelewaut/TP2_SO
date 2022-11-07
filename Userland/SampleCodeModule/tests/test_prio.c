@@ -15,7 +15,7 @@
 int64_t priority[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
 void test_prio(uint64_t args_cant, char *args[]){
-    if(args_cant != 1 ) return -1;
+    // if(args_cant != 1 ) return -1;
 
     int64_t pids[TOTAL_PROCESSES];
     char *argv[] = {"endless_loop_print"};

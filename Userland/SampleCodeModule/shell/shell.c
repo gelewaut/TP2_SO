@@ -206,7 +206,8 @@ uint8_t shell_execute()
         if (cmd > 0)
         {
             int fd[2] = {0,1};
-            result = commandDispatcher(cmd - 1, args_counter, args, fd);
+            char * tmp = (char *) args;
+            result = commandDispatcher(cmd - 1, args_counter, &tmp, fd);
         }
         else if (cmd == 0)
         {
