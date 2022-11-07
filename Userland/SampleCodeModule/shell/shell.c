@@ -75,7 +75,7 @@ static void pipe_init(uint8_t pipe_idx) {
     
 }
 
-typedef uint64_t (*Command) (char **, uint8_t);
+typedef uint64_t (*Command) (uint64_t, char **);
 
 static Command command_functions[NUMBER_OF_COMMANDS] = { 
     (Command)&helpCommand,  //0

@@ -1,5 +1,5 @@
-#ifndef TIME_H_
-#define TIME_H_
+#ifndef _MY_TIME_H_
+#define _MY_TIME_H_
 
 #include <stdint.h>
 #include <idtLoader.h>

@@ -36,4 +36,6 @@ void sys_printProcesses();
 void sys_printSemaphores();
 void sys_printPipes();
 
+uint64_t sys_getTicks();
+
 #endif

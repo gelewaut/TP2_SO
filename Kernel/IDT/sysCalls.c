@@ -4,6 +4,7 @@
 #include <scheduler.h>
 #include <pipes.h>
 #include "../include/semaphore.h"
+#include <my_time.h>
 
 uint64_t sys_read(int fd, char * buf, uint64_t count) {
     if (count<=0 || fd != 0)
@@ -131,6 +132,10 @@ void sys_printSemaphores() {
 
 void sys_printPipes() {
     pipeInfo();
+}
+
+uint64_t sys_getTicks(){
+    return ticks_elapsed();
 }
 
 //MISSING PRINT MEM

@@ -13,9 +13,10 @@
 
 #define BACKSPACE 127
 #define ENTER '\n'
+#define ESC 27
 
 #define EXIT_SUCCESS 1
-#define EXIT_FAILURE 2
+#define EXIT_FAILURE 0
 
 void init_shell();
 void shell_welcome();

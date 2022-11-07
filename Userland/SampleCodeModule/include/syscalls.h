@@ -21,7 +21,7 @@ void sys_printProcesses();
 void sys_blockProcess(uint64_t pid);
 
 uint64_t sys_semCreate (const char * _name, uint64_t _value);
-uint64_t sys_semOpen (const char * _name);
+Semaphore* sys_semOpen (const char * _name);
 uint64_t sys_semClose (Semaphore * sem);
 uint64_t sys_semSignal (Semaphore * sem);
 uint64_t sys_semWait (Semaphore * sem);
@@ -32,5 +32,7 @@ uint64_t sys_openPipe(int id, int r_or_w);
 void sys_printPipes();
 
 void sys_clearScreen();
+
+uint64_t sys_getTicks();
 
 #endif

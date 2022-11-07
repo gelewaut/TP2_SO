@@ -26,6 +26,8 @@ GLOBAL sys_printSemaphores
 
 GLOBAL sys_clearScreen
 
+GLOBAL sys_getTicks
+
 section .text
     
 ;Para pasar argumentos se usan los registros RDI, RSI,
@@ -113,3 +115,6 @@ sys_printPipes:
 
 sys_clearScreen:
     handler_sysCall 21
+
+sys_getTicks
+    handler_sysCall 22

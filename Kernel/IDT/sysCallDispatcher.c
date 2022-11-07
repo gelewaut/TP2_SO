@@ -1,4 +1,5 @@
 #include <sysCalls.h>
+#include <naiveConsole.h>
 
 typedef uint64_t (*SysCall) (uint64_t, uint64_t, uint64_t, uint64_t, uint64_t);
 
@@ -31,6 +32,7 @@ static SysCall sysCalls[25] = {
     (SysCall)&sys_printPipes,     //20
     
     (SysCall)&ncClear,            //21
+    (SysCall)&sys_getTicks        // 22  
     };
 
 uint64_t sysCallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9_rax) {

@@ -21,19 +21,19 @@ static char *valid_commands[NUMBER_OF_COMMANDS+1] = {
     "filter"    // 13
 };
 
-uint64_t helpCommand(char *args[], uint64_t args_cant);
-uint64_t printmemCommand(char *args[], uint64_t args_cant);
-uint64_t phyloCommand(char *args[], uint64_t args_cant);
-uint64_t psCommand(char *args[], uint64_t args_cant);
-uint64_t loopCommand(char *args[], uint64_t args_cant);
-uint64_t killCommand(char *args[], uint64_t args_cant);
-uint64_t niceCommand(char *args[], uint64_t args_cant);
-uint64_t blockCommand(char *args[], uint64_t args_cant);
-uint64_t semCommand(char *args[], uint64_t args_cant);
-uint64_t catCommand(char *args[], uint64_t args_cant);
-uint64_t wcCommand(char *args[], uint64_t args_cant);
-uint64_t filterCommand(char *args[], uint64_t args_cant);
-uint64_t pipeCommand(char *args[], uint64_t args_cant);
+uint64_t helpCommand(uint64_t args_cant,char *args[]);
+uint64_t printmemCommand(uint64_t args_cant,char *args[]);
+uint64_t phyloCommand(uint64_t args_cant,char *args[]);
+uint64_t psCommand(uint64_t args_cant,char *args[]);
+uint64_t loopCommand(uint64_t args_cant,char *args[]);
+uint64_t killCommand(uint64_t args_cant,char *args[]);
+uint64_t niceCommand(uint64_t args_cant,char *args[]);
+uint64_t blockCommand(uint64_t args_cant,char *args[]);
+uint64_t semCommand(uint64_t args_cant,char *args[]);
+uint64_t catCommand(uint64_t args_cant,char *args[]);
+uint64_t wcCommand(uint64_t args_cant,char *args[]);
+uint64_t filterCommand(uint64_t args_cant,char *args[]);
+uint64_t pipeCommand(uint64_t args_cant,char *args[]);
 
 
 #endif
