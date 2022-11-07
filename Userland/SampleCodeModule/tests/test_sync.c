@@ -30,7 +30,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]){
   if ((use_sem = satoi(argv[2])) < 0) return -1;
 
   if (use_sem)
-    if ( (sem = sys_semCreate(SEM_ID, 1)) == NULL){
+    if ( (sem = sys_semOpen(SEM_ID)) == NULL){
       printf("test_sync: ERROR opening semaphore\n");
       return -1;
     }
@@ -39,7 +39,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]){
   for (i = 0; i < n; i++){
     if (use_sem) sys_semWait(sem);
     slowInc(&global, inc);
-    if (use_sem) sys_semOpen(SEM_ID);
+    if (use_sem) sys_semSignal(SEM_ID);
   }
 
   if (use_sem) sys_semClose(sem);
@@ -49,6 +49,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]){
 
 uint64_t test_sync(uint64_t argc, char *argv[]){ //{n, use_sem, 0}
   printf("In test_sync...\n");
+  Semaphore * sem = sys_semCreate(SEM_ID, 1);
   
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
   int std_fd[2] = {0, 1};

@@ -226,8 +226,9 @@ uint64_t test_pcs_command(uint64_t argc, char ** argv){
 }
 
 uint64_t test_sync_command(uint64_t argc, char ** argv){
-    printf("In test_sync_command...\n");
-    if(argc != 3){
+    printf("\nIn test_sync_command...\n");
+    printf("%d, argv[0]: %s\n", argc, argv[0]);
+    if(argc != 3) {
         printf("Cantidad de parametros invalida. Metodo de uso: test_sync <n> <use_sem>\n");
         return 0;
     }

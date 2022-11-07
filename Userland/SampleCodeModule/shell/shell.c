@@ -95,10 +95,10 @@ static Command command_functions[NUMBER_OF_COMMANDS] = {
     (Command)&niceCommand,          //  5   
     (Command)&blockCommand,         //  6
     (Command)&semCommand,           //  7
-    (Command)&test_mm_command,      //  8
-    (Command)&test_prio_command,    //  9
-    (Command)&test_pcs_command,     //  10
-    (Command)&test_sync_command,    //  11
+    (Command)&test_mm_command,              //  8
+    (Command)&test_prio_command,            //  9
+    (Command)&test_pcs_command,       //  10
+    (Command)&test_sync_command,            //  11
 
 
     //No built in

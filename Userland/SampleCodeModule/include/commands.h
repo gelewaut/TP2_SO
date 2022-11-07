@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <shell.h>
+#include <tests.h>
 
 static char *valid_commands[NUMBER_OF_COMMANDS+1] = {
     "exit",     // 0
