@@ -53,10 +53,10 @@ uint64_t psCommand( uint64_t args_cant,char *args[]){
 uint64_t loopCommand( uint64_t args_cant,char *args[]){
     if(args_cant == 0){
         int t = 0;
-        long pid = my_getpid();
+        long pid = sys_getPID();
 
         while(1){
-            t = ticks();
+            t = sys_getTicks();
             if(t % 18 == 0 ) {
                 printf("PID: %d\n", pid);
             }  
@@ -73,6 +73,7 @@ uint64_t killCommand( uint64_t args_cant,char *args[]){
         if (pid != -1 )
         {
             sys_killProcess(pid);
+        }else{
             printf("\n El pid del proceso debe ser un numero valido, para ver procesos activos correr el comando ps.\n");
         }
     }else{
@@ -91,6 +92,8 @@ uint64_t niceCommand( uint64_t args_cant,char *args[]){
         if (pid != -1 && priority != -1)
         {
             sys_changePriority(pid,priority,foreground);
+            printf("\n El pid y la nueva prioridad son valores numericos. \n");
+        }else{
             printf("\n El pid y la nueva prioridad son valores numericos. \n");
         }
     }else{

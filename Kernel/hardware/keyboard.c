@@ -12,6 +12,13 @@
 //dwnk 80
 
 // #define BUFFER_SIZE 57
+#define LSHIFT_PRESSED 0x2A
+#define LSHIFT_RELEASED 0xAA
+#define RSHIFT_PRESSED 0x36 
+#define RSHIFT_RELEASED 0xB6
+
+static uint8_t shift_enabled = 0;
+
 static char buffer[BUFFER_SIZE] = {0};
 int buffer_index = 0;
 
@@ -20,7 +27,7 @@ static const char keys[] = {
     '\t','q','w','e','r','t','y','u','i','o','p','[',']','\n',  //28
     0,'a','s','d','f','g','h','j','k','l',';','\'', //40
     '`',0,'\\','z','x','c','v','b','n','m',',','.','/', 0, //54
-    0,0,' ' //57
+    0,0,' ',//57
 };
 
 void keyboard_handler() {
@@ -33,9 +40,25 @@ void fill_buffer () {
         saveRegs();
     }
 
-    if (key >= 0 && key<= 57 && buffer_index<BUFFER_SIZE) {
-        if(keys[key])
-            buffer[buffer_index++] = keys[key];
+    if (key == LSHIFT_PRESSED || key == RSHIFT_PRESSED) {
+        shift_enabled = 1;
+    }
+    if (key == LSHIFT_RELEASED || key == RSHIFT_RELEASED) {
+        shift_enabled = 0;
+    }
+
+    if (key >= 0 && key<= 57 && buffer_index < BUFFER_SIZE) {
+        int token;
+        if(token = keys[key]) {
+            if (shift_enabled == 1) {
+                if (key == 8) {
+                    token = '&'; 
+                } else if (key == 43) {
+                    token = '|';
+                }
+            }
+            buffer[buffer_index++] = token;
+        }
     }
 }
 

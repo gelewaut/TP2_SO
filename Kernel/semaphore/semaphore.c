@@ -143,9 +143,9 @@ static uint8_t add_to_waiting_list(Semaphore *sem, uint64_t pid) {
 void sem_info() {
   Semaphore * aux = sem_list;
   waiting_list * sc;
-  ncPrint("Semaphores Name, Value, Blocked Processes\n");
+  ncPrint("\nSemaphores Name, Value, Blocked Processes\n");
   if (aux == NULL) {
-    ncPrint("No active semaphores\n\n\n");
+    ncPrint("No active semaphores\n");
     return;
   }
   while (aux != NULL) {

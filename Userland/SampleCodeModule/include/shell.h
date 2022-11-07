@@ -27,7 +27,7 @@ uint8_t shell_execute();
 
 
 uint8_t isCommand();
-uint64_t commandDispatcher(uint64_t cmd);
+uint64_t commandDispatcher(uint64_t cmd, int argc, char *argv[], int fd[2]);
 
 void cleanup();
 void clear_buffer();

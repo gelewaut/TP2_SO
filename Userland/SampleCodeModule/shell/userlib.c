@@ -12,7 +12,7 @@
 #define CLOCK_MINUTES 4
 #define CLOCK_SECONDS 2
 static char buffer[BUFFER_SIZE] = {0};
-static char hexArray[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+// static char hexArray[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 /*
 uint64_t numToStr(char *buf, unsigned long int num, int base)
 {
@@ -220,7 +220,7 @@ void printf(char *string, ...)
 		i++;
 	}
 	va_list list;
-	va_start(list, argumentCount);
+	va_start(list, string);
 	while (*string)
 	{
 		if (*string == '\'')
@@ -240,14 +240,14 @@ void printf(char *string, ...)
 			switch (*string)
 			{
 			case 'd':
-				j = numToStr(buf, va_arg(list, int), 10);
+				j = numToStr(va_arg(list, int), buf,10);
 				sys_write(STDOUT, buf, j);
 				break;
 			case 'c':
 				putChar(va_arg(list, int));
 				break;
 			case 's':
-				buf = va_arg(list, int);
+				buf = va_arg(list, char *);
 				printf(buf);
 				break;
 			default:

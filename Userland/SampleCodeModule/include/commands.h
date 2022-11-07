@@ -7,17 +7,18 @@
 static char *valid_commands[NUMBER_OF_COMMANDS+1] = {
     "exit",     // 0
     "help",     // 1
-    "phylo",    // 2
+    "pipe",     // 2
     "mem",      // 3
     "ps",       // 4
-    "loop",     // 5
-    "kill",     // 6
-    "nice",     // 7
-    "block",    // 8
-    "sem",      // 9
-    "cat",      // 10
-    "wc",       // 11
-    "pipe",     // 12
+    "kill",     // 5
+    "nice",     // 6
+    "block",    // 7
+    "sem",      // 8
+
+    "cat",      // 9
+    "wc",       // 10
+    "loop",     // 11
+    "phylo",    // 12
     "filter"    // 13
 };
 

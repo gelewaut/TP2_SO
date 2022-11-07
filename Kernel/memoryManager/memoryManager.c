@@ -115,7 +115,7 @@ void print_memSet(){
     original = current = freep;
     int flag = 1;
 
-    ncPrint("Total memory: ");
+    ncPrint("\nTotal memory: ");
     ncPrintHex(total_units * sizeof(Header));
     ncPrintChar('\n');
     // print("%s %x %s", "Total memory:        ", total_units * sizeof(Header), "\n\n");
@@ -139,9 +139,6 @@ void print_memSet(){
         current = current->s.ptr;
         idx++;
     }
-
-    ncPrint("\n\n");
-
 }
 
 

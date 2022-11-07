@@ -104,7 +104,7 @@ void pipeInfo () {
     pipeContext * aux = pipes;
     blockedProcess * pcs;
     if (aux == NULL) {
-        ncPrint("No Active PIPES\n\n\n");
+        ncPrint("No Active PIPES\n");
         return;
     }
     while (aux != NULL) {
