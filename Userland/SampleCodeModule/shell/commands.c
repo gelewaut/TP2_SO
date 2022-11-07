@@ -5,6 +5,7 @@
 #include <shell.h>
 #include <userlibc.h>
 #include <stddef.h>
+#include <tests.h>
 
 uint64_t helpCommand( uint64_t args_cant,char *args[])
 {
@@ -212,7 +213,8 @@ uint64_t test_prio_command(uint64_t argc, char ** argv){
         printf("Cantidad de parametros invalida. Metodo de uso: test_prio\n");
         return 0;
     }
-    return test_prio();
+    test_prio(argc, argv);
+    return 1; 
 }
 
 uint64_t test_pcs_command(uint64_t argc, char ** argv){
