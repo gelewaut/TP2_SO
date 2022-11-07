@@ -95,13 +95,18 @@ static Command command_functions[NUMBER_OF_COMMANDS] = {
     (Command)&niceCommand,          //  5   
     (Command)&blockCommand,         //  6
     (Command)&semCommand,           //  7
+    (Command)&test_mm,              //  8
+    (Command)&test_prio,            //  9
+    (Command)&test_processes,       //  10
+    (Command)&test_sync,            //  11
+
 
     //No built in
-    (Command)&catCommand,           //  8
-    (Command)&wcCommand,            //  9
-    (Command)&loopCommand,          //  10
-    (Command)&phyloCommand,         //  11
-    (Command)&filterCommand         //  12  
+    (Command)&catCommand,           //  12
+    (Command)&wcCommand,            //  13
+    (Command)&loopCommand,          //  14
+    (Command)&phyloCommand,         //  15
+    (Command)&filterCommand         //  16  
 };
 
 void init_shell()
@@ -222,7 +227,7 @@ uint64_t commandDispatcher(uint64_t cmd, int argc, char * argv[], int fd[2]) {
     Command command = command_functions[cmd];
     int foreground = 1;
     if (command != 0) {
-        if (cmd <= 7) {
+        if (cmd <= 11) {
             return command(argc-1, argv+1);
         } else {
             if (string_compare(args[argc-1], "&") == 0){

@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <stddef.h>
 #include <my_time.h>
+#include <blockedProcessList.h>
 
 static uint64_t Next_PID = 0;
 static processList processes;
@@ -151,14 +152,15 @@ void copyArgs(process * newProcess, int argc, char ** argv) {
     }
 }
 
-void changeProcessState (uint64_t pid, State state) {
+int changeProcessState (uint64_t pid, State state) {
     process * aux = unlistProcess(pid);
     if (aux == NULL)
-        return;
+        return -1;
 
     if (state == KILLED) {
         if (aux->pcb.pid == current->pcb.pid)
             current = NULL;
+        aux->pcb.start = unblockAllProcess(aux->pcb.start);
         freeProcess(aux);
     } else {
         if (state == BLOCKED) {
@@ -169,8 +171,7 @@ void changeProcessState (uint64_t pid, State state) {
         aux->state = state;
         listProcess(aux);
     }
-    //CALL TIMER TICK
-    halt(1);
+    return 0;
 }
 
 void listProcess(process * myProcess) {
@@ -295,6 +296,13 @@ void yield() {
     }
     //CALL TIMER TICK
     halt(1);
+}
+
+void wait(uint64_t pid) {
+    process * aux = findProcess(pid);
+    if (aux == NULL)
+        return;
+    aux->pcb.start = blockNewProcess(aux->pcb.start, current);
 }
 
 process * getCurrentProcess() {

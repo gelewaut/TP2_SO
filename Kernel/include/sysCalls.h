@@ -16,9 +16,9 @@ void * sys_malloc (uint64_t bytes);
 void sys_free (void * ap);
 
 uint64_t sys_createProcess (void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground);
-void sys_killProcess (uint64_t pid);
+int sys_killProcess (uint64_t pid);
 uint64_t sys_getPID ();
-void sys_blockProcess (uint64_t pid);
+int sys_blockProcess (uint64_t pid);
 void sys_changePriority(uint64_t pid, uint64_t priority, uint64_t foreground);
 void sys_yield();
 
@@ -37,5 +37,7 @@ void sys_printSemaphores();
 void sys_printPipes();
 
 uint64_t sys_getTicks();
+
+void sys_wait(uint64_t pid) ;
 
 #endif

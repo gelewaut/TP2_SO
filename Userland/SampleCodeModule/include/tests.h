@@ -3,7 +3,9 @@
 
 #include <stdint.h>
 
-uint64_t divByZero();
-uint64_t opCodeTest();
+uint64_t test_mm(uint64_t args_cant, char *args[]);
+void test_prio(uint64_t args_cant, char *args[]);
+int64_t test_processes(uint64_t args_cant, char *args[]);
+uint64_t test_sync(uint64_t args_cant, char *args[]);
 
 #endif

@@ -63,23 +63,24 @@ uint64_t sys_createProcess(void (*entryPoint)(int, char**), int argc, char ** ar
     return addProcess(entryPoint, argc, argv, fd, foreground);
 }
 
-void sys_killProcess (uint64_t pid) {
-    changeProcessState(pid, KILLED);
+int sys_killProcess (uint64_t pid) {
+    return changeProcessState(pid, KILLED);
 }
 
 uint64_t sys_getPID () {
     return getPID();
 }
 
-void sys_blockProcess (uint64_t pid) {
+int sys_blockProcess (uint64_t pid) {
     process * aux = findProcess(pid);
     if (aux == NULL)
-        return;
+        return -1;
     if (aux->state == READY) {
        return changeProcessState(pid, BLOCKED);
     } else if (aux->state == BLOCKED){
         return changeProcessState(pid, READY);
     }
+    return -1;
 }
 
 void sys_changePriority(uint64_t pid, uint64_t priority, uint64_t foreground) {
@@ -136,6 +137,10 @@ void sys_printPipes() {
 
 uint64_t sys_getTicks(){
     return ticks_elapsed();
+}
+
+void sys_wait(uint64_t pid){
+    wait(pid);
 }
 
 //MISSING PRINT MEM

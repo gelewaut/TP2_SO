@@ -28,6 +28,8 @@ GLOBAL sys_clearScreen
 
 GLOBAL sys_getTicks
 
+GLOBAL sys_wait
+
 section .text
     
 ;Para pasar argumentos se usan los registros RDI, RSI,
@@ -116,5 +118,8 @@ sys_printPipes:
 sys_clearScreen:
     handler_sysCall 21
 
-sys_getTicks
+sys_getTicks:
     handler_sysCall 22
+
+sys_wait:
+    handler_sysCall 23

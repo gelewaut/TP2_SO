@@ -22,7 +22,10 @@ typedef struct PCB {
     char name[30];
     uint64_t argc;
     char ** argv;
+    struct blockedProcess * start;
 } PCB;
+
+
 
 typedef enum State
 {
@@ -72,7 +75,7 @@ void initScheduler();
 void * schedule(void * oldRsp);
 uint64_t addProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground);
 process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground);
-void changeProcessState (uint64_t pid, State state);
+int changeProcessState (uint64_t pid, State state);
 void listProcess(process * myProcess);
 process * unlistProcess(uint64_t pid);
 process * findReadyProcess ();
@@ -85,5 +88,6 @@ process * getCurrentProcess();
 void copyArgs(process * newProcess, int argc, char ** argv);
 void schedulerInfo();
 void exit();
+void wait(uint64_t pid) ;
 
 #endif

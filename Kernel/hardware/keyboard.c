@@ -49,7 +49,7 @@ void fill_buffer () {
 
     if (key >= 0 && key<= 57 && buffer_index < BUFFER_SIZE) {
         int token;
-        if(token = keys[key]) {
+        if((token = keys[key])) {
             if (shift_enabled == 1) {
                 if (key == 8) {
                     token = '&'; 

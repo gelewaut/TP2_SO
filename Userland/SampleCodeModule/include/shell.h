@@ -9,7 +9,7 @@
 #define MAX_COMMAND_LENGHT 7
 #define MAX_ARGS 1
 #define MAX_ARG_LENGHT 16
-#define NUMBER_OF_COMMANDS 14
+#define NUMBER_OF_COMMANDS 17
 
 #define BACKSPACE 127
 #define ENTER '\n'

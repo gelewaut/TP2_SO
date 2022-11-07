@@ -14,12 +14,16 @@ static char *valid_commands[NUMBER_OF_COMMANDS+1] = {
     "nice",     // 6
     "block",    // 7
     "sem",      // 8
+    "testmm",   // 9
+    "testprio", // 10
+    "testprocesses",    // 11
+    "testsync", // 12
 
-    "cat",      // 9
-    "wc",       // 10
-    "loop",     // 11
-    "phylo",    // 12
-    "filter"    // 13
+    "cat",      // 13
+    "wc",       // 14
+    "loop",     // 15
+    "phylo",    // 16
+    "filter"    // 17
 };
 
 uint64_t helpCommand(uint64_t args_cant,char *args[]);
