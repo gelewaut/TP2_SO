@@ -235,9 +235,9 @@ uint64_t commandDispatcher(uint64_t cmd, int argc, char * argv[], int fd[2]) {
                 foreground = 0;
                 argc--;
             }
-            int ok = sys_createProcess((void *)command, argc, argv, fd, foreground);
-            return ok;
-
+            int childPid = sys_createProcess((void *)command, argc, argv, fd, foreground);
+            sys_wait(childPid);
+            return 1;
         }
     }
     return 0;
