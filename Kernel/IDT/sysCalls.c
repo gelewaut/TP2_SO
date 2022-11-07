@@ -58,7 +58,7 @@ void sys_free (void * ap) {
     my_free(ap);
 }
 
-uint64_t sys_createProcess (void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground) {
+uint64_t sys_createProcess(void (*entryPoint)(int, char**), int argc, char ** argv, int fd[2], int foreground) {
     return addProcess(entryPoint, argc, argv, fd, foreground);
 }
 

@@ -1,4 +1,5 @@
 #include <shell.h>
+#include <sysCalls.h>
 #include <userlibc.h>
 #include <stdint.h>
 #include <commands.h>
@@ -9,6 +10,70 @@ static int bufferIdx = 0;
 static char command_buffer[MAX_COMMAND_LENGHT + 1] = {0};
 static char * args[MAX_ARG_LENGHT + 1] = {0};
 static uint8_t args_counter = 0;
+
+static uint8_t pipe_check();
+static void pipe_init(uint8_t pipe_idx);
+static uint8_t pipe_run(uint8_t pipe_idx);
+uint8_t check_command(const char * str);
+
+static uint8_t pipe_check() {
+    uint8_t i;
+    for (i = 0; i < args_counter; i++) {
+        if (string_compare(args[i], "|") == 0) {
+            return i;
+        }
+    }
+    return 0;
+}
+
+uint8_t check_command(const char * str) {
+    for (int i = 0; i < NUMBER_OF_COMMANDS; i++) {
+        if (string_compare(command_buffer, valid_commands[i]) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
+static void pipe_init(uint8_t pipe_idx) {
+    if (pipe_idx == 0 || pipe_idx == args_counter - 1) {
+        return;
+    }
+
+    char * args_left[MAX_ARG_LENGHT] = {0};
+    char * args_right[MAX_ARG_LENGHT] = {0};
+    uint8_t * argc_left = 0;
+    uint8_t * argc_right = 0;
+
+    for (int i = 0; i < pipe_idx; i++) {
+        argc_left++;
+        args_left[i] = args[i];
+    }
+    for (int i = pipe_idx + 1; i < args_counter; i++) {
+        argc_right++;
+        args_right[i] = args[i];
+    }
+
+    uint8_t left_cmd, right_cmd;
+    left_cmd = isCommand(argc_left[0]);
+    right_cmd = isCommand(args_right[0]);
+
+    if (left_cmd < 0 || right_cmd < 0) {
+        printf("One of the commands doesnt exist.");
+        return;
+    }
+
+    // aca deberiamos crear el pipe
+    // falta tambien checkear si es background o foreground
+
+    Command command_left = command_functions[left_cmd]; 
+    Command command_left = command_functions[right_cmd];
+
+    // aca crear los procesos y llamarlos con sus respectivos argumentos y fd del pipie
+    
+    
+}
 
 typedef uint64_t (*Command) (char **, uint8_t);
 
@@ -140,6 +205,7 @@ uint8_t isCommand()
     }
     return -1;
 }
+
 
 uint64_t commandDispatcher(uint64_t cmd) {
     Command command = command_functions[cmd];
