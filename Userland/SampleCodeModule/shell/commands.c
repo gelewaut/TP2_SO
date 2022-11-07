@@ -197,36 +197,37 @@ uint64_t pipeCommand( uint64_t args_cant,char *args[]){
     return EXIT_SUCCESS;    
 }
 
-//comandos para los tests
 
-// void testMM(int argc, char ** argv){
-//     if(argc != 2){
-//         printf("Cantidad de parametros invalida. Metodo de uso: test_mm <MAX_MEMORY>\n");
-//         return;
-//     }
-//     test_mm(1, &argv[1]);
-// }
 
-// void testPrio(int argc, char ** argv){
-//     if(argc != 1){
-//         printf("Cantidad de parametros invalida. Metodo de uso: test_prio\n");
-//         return;
-//     }
-//     test_prio();
-// }
+uint64_t test_mm_command(uint64_t argc, char ** argv){
+    if(argc != 2){
+        printf("Cantidad de parametros invalida. Metodo de uso: test_mm <MAX_MEMORY>\n");
+    return 0;
+    }
+    return test_mm(1, &argv[1]);
+}
 
-// void testPCS(int argc, char ** argv){
-//     if(argc != 2){
-//         printf("Cantidad de parametros invalida. Metodo de uso: test_processes <MAX_PROCESSES>\n");
-//         return;
-//     }
-//     test_processes(1, &argv[1]); 
-// }
-// void testSync(int argc, char ** argv){
-//     if(argc != 3){
-//         printf("Cantidad de parametros invalida. Metodo de uso: test_sync <n> <use_sem>\n");
-//         return;
-//     }
-//     char * argAux [2]={argv[1], argv[2]};
-//     test_sync(2, argAux);
-// }
+uint64_t test_prio_command(uint64_t argc, char ** argv){
+    if(argc != 1){
+        printf("Cantidad de parametros invalida. Metodo de uso: test_prio\n");
+        return 0;
+    }
+    return test_prio();
+}
+
+uint64_t test_pcs_command(uint64_t argc, char ** argv){
+    if(argc != 2){
+        printf("Cantidad de parametros invalida. Metodo de uso: test_processes <MAX_PROCESSES>\n");
+        return 0;
+    }
+    return test_processes(1, &argv[1]); 
+}
+
+uint64_t test_sync_command(uint64_t argc, char ** argv){
+    printf("In test_sync_command...\n");
+    if(argc != 3){
+        printf("Cantidad de parametros invalida. Metodo de uso: test_sync <n> <use_sem>\n");
+        return 0;
+    }
+    return test_sync(argc, argv);
+}

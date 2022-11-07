@@ -40,5 +40,10 @@ uint64_t wcCommand(uint64_t args_cant,char *args[]);
 uint64_t filterCommand(uint64_t args_cant,char *args[]);
 uint64_t pipeCommand(uint64_t args_cant,char *args[]);
 
+uint64_t test_mm_command(uint64_t argc, char ** argv);
+uint64_t test_sync_command(uint64_t argc, char ** argv);
+uint64_t test_pcs_command(uint64_t argc, char ** argv);
+uint64_t test_prio_command(uint64_t argc, char ** argv);
+
 
 #endif
