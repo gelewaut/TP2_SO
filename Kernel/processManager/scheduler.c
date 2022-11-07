@@ -303,6 +303,7 @@ void wait(uint64_t pid) {
     if (aux == NULL)
         return;
     aux->pcb.start = blockNewProcess(aux->pcb.start, current);
+    halt(1);
 }
 
 process * getCurrentProcess() {

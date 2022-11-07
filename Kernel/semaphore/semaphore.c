@@ -115,7 +115,7 @@ Semaphore *sem_create(const char * _name, uint64_t _value) {
   my_strcpy(sem->name, _name);
   sem->value = _value;
   sem->proccesses_attached = 0;
-  sem->lock = 0;
+  *(sem->lock) = 0;
   sem->waiting = NULL;
   sem->next = NULL;
   add_sem(sem);
