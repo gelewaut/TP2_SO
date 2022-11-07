@@ -1,124 +1,192 @@
-#include <stdint.h>
 #include <phylosophers.h>
 
-#define N 5
-#define THINKING 2
-#define HUNGRY 1
-#define EATING 0
-#define LEFT (phnum + 4) % N
-#define RIGHT (phnum + 1) % N
+//LINK DE APOYO: https://github.com/pchapin/tutorialpthread/blob/master/philosophers.c
 
-int state[N];
-int phil[N] = { 0, 1, 2, 3, 4 };
+#define MAX_PHYLOS 8
+#define MIN_PHYLOS 4
+#define BASE_SEM_ID 1000
 
-// sem_t mutex;
-// sem_t S[N]; 
+typedef enum
+{
+    THINKING = 1,
+    EATING = 2,
+    HUNGRY = 3,
+} PHYLO_STATE;
 
-// void test(int phnum)
-// {
-// 	if (state[phnum] == HUNGRY
-// 		&& state[LEFT] != EATING
-// 		&& state[RIGHT] != EATING) {
-// 		// state that eating
-// 		state[phnum] = EATING;
+typedef struct Phylosopher
+{
+    int pid;
+    Semaphore * sem;
+    PHYLO_STATE state;
+} Phylosopher;
 
-// 		sleep(2);
+Phylosopher * phylos[MAX_PHYLOS];
+static int actualPhylosopherCount = 0;
+static Semaphore * semMutex;
+static int problemRunning;
 
-// 		printf("Philosopher %d takes fork %d and %d\n",
-// 					phnum + 1, LEFT + 1, phnum + 1);
+#define RIGHT(i) ((i) + 1) % (actualPhylosopherCount)                         /* number of i right neighbor */
+#define LEFT(i) ((i) + actualPhylosopherCount - 1) % (actualPhylosopherCount) /* number of i left neighbor */
 
-// 		printf("Philosopher %d is Eating\n", phnum + 1);
+void phylo(int argc, char *argv[]);
+void takeForks(int i);
+void placeForks(int i);
+void test(int i);
+int addPhylosopher();
+int removePhylosopher();
+void printTable();
 
-// 		// sem_post(&S[phnum]) has no effect
-// 		// during takefork
-// 		// used to wake up hungry philosophers
-// 		// during putfork
-// 		sem_post(&S[phnum]);
-// 	}
-// }
-
-// // take up chopsticks
-// void take_fork(int phnum)
-// {
-
-// 	sem_wait(&mutex);
-
-// 	// state that hungry
-// 	state[phnum] = HUNGRY;
-
-// 	printf("Philosopher %d is Hungry\n", phnum + 1);
-
-// 	// eat if neighbours are not eating
-// 	test(phnum);
-
-// 	sem_post(&mutex);
-
-// 	// if unable to eat wait to be signalled
-// 	sem_wait(&S[phnum]);
-
-// 	sleep(1);
-// }
-
-// // put down chopsticks
-// void put_fork(int phnum)
-// {
-
-// 	sem_wait(&mutex);
-
-// 	// state that thinking
-// 	state[phnum] = THINKING;
-
-// 	printf("Philosopher %d putting fork %d and %d down\n",
-// 		phnum + 1, LEFT + 1, phnum + 1);
-// 	printf("Philosopher %d is thinking\n", phnum + 1);
-
-// 	test(LEFT);
-// 	test(RIGHT);
-
-// 	sem_post(&mutex);
-// }
-
-// void* philosopher(void* num)
-// {
-
-// 	while (1) {
-
-// 		int* i = num;
-
-// 		sleep(1);
-
-// 		take_fork(*i);
-
-// 		sleep(0);
-
-// 		put_fork(*i);
-// 	}
-// }
-
-void run_phylosophers(uint64_t cant){
-    return ;
+void phylo(int argc, char *args[])
+{
+    int idx = strToNum(args[0]);
+    while (problemRunning)
+    {
+        takeForks(idx);
+        sleep(1);
+        placeForks(idx);
+        sleep(1);
+    }
 }
-// {
 
-// 	int i;
-// 	pthread_t thread_id[N];
+void takeForks(int i)
+{
+    sys_semWait(semMutex);
+    phylos[i]->state = HUNGRY;
+    test(i);
+    sys_semSignal(semMutex);
+    sys_semWait(phylos[i]->sem);
+}
 
-// 	// initialize the semaphores
-// 	sem_init(&mutex, 0, 1);
+void placeForks(int i)
+{
+    sys_semWait(semMutex);
+    phylos[i]->state = THINKING;
+    test(LEFT(i));
+    test(RIGHT(i));
+    sys_semSignal(semMutex);
+}
 
-// 	for (i = 0; i < N; i++)
+void test(int i)
+{
+    if (phylos[i]->state == HUNGRY && phylos[LEFT(i)]->state != EATING && phylos[RIGHT(i)]->state != EATING)
+    {
+        phylos[i]->state = EATING;
+        sys_semSignal(phylos[i]->sem);
+    }
+}
 
-// 		sem_init(&S[i], 0, 0);
+void run_phylosophers()
+{
+    problemRunning = 1;
+    semMutex = sys_semCreate("Mutex", 1);
+    printf("Bienvenido al problema de los filosofos\n");
+    printf("El problema tiene un minimo de 4 filosofos y un maximo de 8 filosofos\n");
+    printf("Puedes agregar un filosofo presionando la tecla \'a\', sacar uno presionando la tecla \'d\' y salir con la tecla \'q\'.\n");
+    printf("El estado de cada uno se muestra como E (Eating) o . (Hungry)\n\n");
 
-// 	for (i = 0; i < N; i++) {
+    printf("Esperando a los filosofos...\n\n");
 
-// 		// create philosopher processes
-// 		pthread_create(&thread_id[i], NULL,
-// 					philosopher, &phil[i]);
+    sleep(1);
 
-// 		printf("Philosopher %d is thinking\n", i + 1);
-// 	}
+    for (int i = 0; i < MIN_PHYLOS; i++){
 
-// 	for (i = 0; i < N; i++)
-// 		pthread_join(thread_id[i], NULL);
-// }
+        addPhylosopher();
+
+    }
+
+    char *args[] = {"PrintTable"};
+    int fd[2];
+    fd[0] = 0;
+    fd[1] = 1;
+    int printTablePid = sys_createProcess(&printTable, 1, args, fd, 1);
+    while (problemRunning)
+    {
+
+        char key = getChar();
+        switch (key)
+        {
+        case 'a':
+        if (addPhylosopher() == -1)
+            printf("No se puede agregar otro filosofo. Hay un maximo de 8 filosofos.\n");
+        else
+            printf("Se unio un nuevo filosofo\n");
+        break;
+        case 'd':
+        if (removePhylosopher() == -1)
+            printf("No se puede sacar otro filosofo. Hay un minimo de 4 filosofos.\n");
+        else
+            printf("Se saco un filosofo\n");
+        break;
+        case 'q':
+        printf("Programa terminado\n");
+        problemRunning = 0;
+        break;
+        default:
+        break;
+        }
+    }
+
+    for (int i = 0; i < actualPhylosopherCount; i++)
+    {
+        sys_semClose(phylos[i]->sem);
+        sys_killProcess(phylos[i]->pid);
+        sys_free(phylos[i]);
+    }
+    actualPhylosopherCount = 0;
+    sys_killProcess(printTablePid);
+    sys_semClose(semMutex);
+}
+
+int addPhylosopher()
+{
+    
+    if (actualPhylosopherCount == MAX_PHYLOS)
+        return -1;
+
+    sys_semWait(semMutex);
+    Phylosopher *auxPhylo = sys_malloc(sizeof(Phylosopher));
+    if (auxPhylo == NULL)
+        return -1;
+    auxPhylo->state = THINKING;
+    auxPhylo->sem = sys_semOpen("Mutex");
+    char buffer[3];
+    char *name[] = {"phylosopher", (char*)numToStr(actualPhylosopherCount, buffer, 10)};
+    auxPhylo->pid = sys_createProcess(&phylo, 2, name, 0, 1);
+    phylos[actualPhylosopherCount++] = auxPhylo;
+    sys_semSignal(semMutex);
+    return 0;
+}
+
+int removePhylosopher()
+{
+    if (actualPhylosopherCount == MIN_PHYLOS)
+    {
+        return -1;
+    }
+
+    actualPhylosopherCount--;
+    Phylosopher *chosenPhylo = phylos[actualPhylosopherCount];
+    sys_semClose(chosenPhylo->sem);
+    sys_killProcess(chosenPhylo->pid);
+    sys_free(chosenPhylo);
+    sys_semSignal(semMutex);
+
+    return 0;
+}
+
+void printTable(int argc, char *args[])
+{
+    while (problemRunning)
+    {
+        sys_semWait(semMutex);
+        for (int i = 0; i < actualPhylosopherCount; i++)
+        {
+        phylos[i]->state == EATING ? putChar('E') : putChar('.');
+        putChar(' ');
+        }
+        putChar('\n');
+        sys_semSignal(semMutex);
+        sys_yield();
+    }
+}
+

@@ -397,3 +397,15 @@ uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
 //         return -1;
 //     return buff[0];
 // }
+
+int getSecondsElapsed()
+{
+      int t = sys_getTicks();
+      return t / 18;
+}
+
+void sleep(unsigned int seconds)
+{
+      unsigned int limitTime = seconds + getSecondsElapsed();
+      while (getSecondsElapsed() < limitTime);
+}
