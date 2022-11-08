@@ -1,4 +1,5 @@
-// #ifdef FREEMM
+#ifndef BUDDY
+#define MEMMANAGER
 
 //Codigo extraido o basado en el libro C Programming de Kernigan y Ritchie
 
@@ -142,4 +143,4 @@ void print_memSet(){
 }
 
 
-// #endif
+#endif
