@@ -23,7 +23,7 @@ uint64_t numToStr(uint64_t value, char * buffer, uint32_t base);
 uint32_t uintToStr(uint64_t value, char * buffer);
 int strToNum(char *str);
 int string_compare(const char *s1, const char *s2);
-void printf(char *string, ...);
+int printf(char *string, ...);
 int scanf(char *string, ...);
 char getChar();
 void putChar(char c);
@@ -46,5 +46,8 @@ void printDecAT(uint64_t value, int x, int y);
 void printHexAT(uint64_t value, int x, int y);
 void sleep(unsigned int seconds);
 int getSecondsElapsed();
+char *strcpy(char *destination, const char *source);
+int strlen(char * s);
+long strtol(const char *nptr, char **endptr, register int base);
 
 #endif

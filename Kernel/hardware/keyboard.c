@@ -19,6 +19,10 @@
 
 static uint8_t shift_enabled = 0;
 
+static int rdIdx = 0; //Posicion de escritura
+static int wrIdx = 0; //Posicion de lectura
+static int activeSize = 0; //Elementos legibles en el buffer
+
 static char buffer[BUFFER_SIZE] = {0};
 int buffer_index = 0;
 
@@ -29,6 +33,9 @@ static const char keys[] = {
     '`',0,'\\','z','x','c','v','b','n','m',',','.','/', 0, //54
     0,0,' ',//57
 };
+
+int dumpChar();
+void loadKey(char c);
 
 void keyboard_handler() {
     fill_buffer();
@@ -47,7 +54,10 @@ void fill_buffer () {
         shift_enabled = 0;
     }
 
-    if (key >= 0 && key<= 57 && buffer_index < BUFFER_SIZE) {
+    if (key >= 0 && key<= 57) {
+        if(buffer_index >= BUFFER_SIZE) {
+            buffer_index = 0;
+        }
         int token;
         if((token = keys[key])) {
             if (shift_enabled == 1) {
@@ -57,35 +67,46 @@ void fill_buffer () {
                     token = '|';
                 }
             }
-            buffer[buffer_index++] = token;
+            loadKey(token);
         }
     }
 }
 
-uint64_t dump_buffer(char * dest, uint64_t size) {
-    if(dest == 0 || size <= 0) {
+void loadKey(char c){
+    if (c != 0)
+    {
+        buffer[wrIdx] = c;
+        wrIdx = (wrIdx + 1) % BUFFER_SIZE; //Ciclo circularmente por el buffer
+
+        // Si no llene el buffer, aumento su tamaño, si lo llene, agrego igual pero pierdo su ultimo valor "lectura artificial"
+        if (activeSize < BUFFER_SIZE)
+            activeSize++;
+        else
+            rdIdx = (rdIdx + 1) % BUFFER_SIZE;
+    }
+}
+
+int dumpChar()
+{
+    if (activeSize <= 0) 
         return -1;
+
+    int c = buffer[rdIdx];
+    rdIdx = (rdIdx + 1) % BUFFER_SIZE;
+    activeSize--;
+    return c;
+}
+
+int dumpBuffer(char* destination, int size)
+{
+    if (size<=0 || activeSize<=0)
+        return -1;
+
+    int idx=0;
+    while (idx<size-1 && activeSize){
+        destination[idx] = dumpChar();
+        idx++;
     }
-    
-    int index = 0;
-    for (; index < size && buffer_index > 0; index++) {
-        buffer[buffer_index--] = 0;
-        dest[index] = buffer[buffer_index];
-    }
-    return index;
-}
-
-
-
-char * get_buffer () {
-    return buffer;
-}
-
-int buffer_count () {
-    return buffer_index;
-}
-
-void clear_buffer () {
-    while (buffer_index>0)
-        buffer[buffer_index--] = 0;
+    destination[idx]=0;
+    return idx;
 }

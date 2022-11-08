@@ -10,7 +10,7 @@ void keyboard_handler();
 uint64_t dump_buffer(char * dest, uint64_t size);
 
 void fill_buffer ();
-uint64_t dump_buffer(char * dest, uint64_t size);
+int dumpBuffer(char* destination, int size);
 
 char * get_buffer ();
 int buffer_count ();

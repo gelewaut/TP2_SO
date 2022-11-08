@@ -15,18 +15,8 @@ uint64_t sys_read(int fd, char * buf, uint64_t count) {
     }
     
     if (aux->pcb.fd[0] == 0) {
-        clear_buffer();
-        while(buffer_count()<count) {
-            fill_buffer();
-        }
-        char * bufferAux = get_buffer();
-        int i;
-        for (i=0; i<count; i++) {
-            buf[i] = bufferAux[i];
-        }
-        clear_buffer();
-        return i;
-        // return dump_buffer(buf, count);
+        char *buff = (char *)buf;
+        return dumpBuffer(buff, count);
     }
     return readPipe(aux->pcb.fd[0], buf, count);
 }
@@ -142,15 +132,3 @@ uint64_t sys_getTicks(){
 void sys_wait(uint64_t pid){
     wait(pid);
 }
-
-//MISSING PRINT MEM
-//MISSING PRINT PROCESSES
-//MISSING PRINT PIPES
-//MISSING PRINT SEMAPHORES
-
-
-/*
-uint64_t sys_writeAT(char * character, uint64_t bytes, int x, int y) {
-    return PrintAt(character, bytes, x, y);
-}
-*/

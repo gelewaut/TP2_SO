@@ -12,26 +12,7 @@
 #define CLOCK_MINUTES 4
 #define CLOCK_SECONDS 2
 static char buffer[BUFFER_SIZE] = {0};
-// static char hexArray[16] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
-/*
-uint64_t numToStr(char *buf, unsigned long int num, int base)
-{
-	cleanBuffer();
-	unsigned char aux;
-	int i = BUFFER_SIZE - 1;
-	buffer[i--] = 0;
-	// if (num == 0)
-	// 	buffer[i--] = '0';
-	while (i >= 0 && num > 0)
-	{
-		aux = num % base;
-		buffer[i--] = hexArray[aux];
-		num /= base;
-	}
-	buf = &buffer[i + 1];
-	return BUFFER_SIZE - (i + 2);
-}
-*/
+
 
 uint64_t numToStr(uint64_t value, char * buffer, uint32_t base)
 {
@@ -67,16 +48,34 @@ uint64_t numToStr(uint64_t value, char * buffer, uint32_t base)
 }
 
 int strToNum(char *str)
-{
-	int num = 0;
-	for (int i = 0; str[i]; i++)
-	{
-		num *= 10;
-		if (str[i] < '0' || str[i] > '9') //no es un numero valido
-			return -1;
-		num += str[i] - '0';
-	}
-	return num;
+ {
+
+    int n = strlen(str);
+    int mult = 1;
+    int number = 0;
+    n = (int) n < 0 ? -n : n;
+
+    while(n--){
+        if((str[n] < '0' || str[n] > '9') && str[n] != '-'){
+            if(number)
+                break;
+            else
+                continue;
+        }
+
+        if(str[n] == '-'){
+            if(number){
+                number = -number;
+                break;
+            }
+        }
+        else {
+            number += (str[n] - '0') * mult;
+            mult *= 10;
+        }
+    }
+
+    return number;
 }
 int string_compare(const char *s1, const char *s2)
 {
@@ -209,59 +208,57 @@ int scanf(char *str, ...)
 	va_end(vl);
 	return ret;
 }
-void printf(char *string, ...)
+int printf(char *str, ...)
 {
-	char *buf;
-	int i = 0, j, argumentCount = 0;
-	while (string[i])
-	{
-		if (string[i] == '%')
-			argumentCount++;
-		i++;
-	}
-	va_list list;
-	va_start(list, string);
-	while (*string)
-	{
-		if (*string == '\'')
-		{
-			string++;
-			sys_write(STDOUT, string, 1);
-			string++;
-		}
-		else if (*string != '%')
-		{
-			sys_write(STDOUT, string, 1);
-			string++;
-		}
-		else
-		{
-			string++;
-			switch (*string)
-			{
-			case 'd':
-				j = numToStr(va_arg(list, int), buf,10);
-				sys_write(STDOUT, buf, j);
-				break;
-			case 'c':
-				putChar(va_arg(list, int));
-				break;
-			case 's':
-				buf = va_arg(list, char *);
-				printf(buf);
-				break;
-			default:
-				break;
-			}
-			string++;
-		}
-	}
-	va_end(list);
+    va_list args;
+    int i = 0, j = 0;  // i lectura en str  - j pos en buffer
+    char buff[100] = {0}, tmp[20];
+    char *str_arg;
+    va_start(args, str);
+    while (str && str[i])
+    {
+        if (str[i] == '%')
+        {
+            i++;
+            switch (str[i])
+            {
+                case 'c':
+                {
+                    buff[j] = (char)va_arg(args, int);
+                    j++;
+                    break;
+                }
+                case 'd':
+                {
+                    numToStr(va_arg(args, int),tmp,10);
+                    strcpy(&buff[j], tmp);
+                    j += strlen(tmp);
+                    break;
+                }
+                case 's': //modificacion para aceptar strings
+                {
+                    str_arg = (char *)va_arg(args, char *);
+                    strcpy(&buff[j], str_arg);
+                    j += strlen(str_arg);
+                    break;
+                }
+            }
+        }
+        else
+        {
+            buff[j] = str[i];
+            j++;
+        }
+        i++;
+    }
+    sys_write(1,buff,j);
+    va_end(args);
+    return j;
 }
 char getChar()
 {
 	char c;
-	sys_read(STDIN, &c, 1);
+	while( sys_read(STDIN, &c, 1) < 1);
 	return c;
 }
 void putChar(char c)
@@ -276,20 +273,7 @@ char getCharContinues()
         return -1;
     return buff[0];
 }
-// void printCharAt(char c, int x, int y)
-// {
-// 	sys_writeAt(&c, 1, x, y);
-// }
-// void printDec(int num)
-// {
-// 	char * buf;
-// 	int i = numToStr(char num, 10)
-// 	printf();
-// }
-// void printHex(int num)
-// {
-// 	printf(numToStr(num, 16));
-// }
+
 void cleanBuffer()
 {
 	for (int i = 0; i < BUFFER_SIZE; i++)
@@ -297,18 +281,7 @@ void cleanBuffer()
 		buffer[i] = 0;
 	}
 }
-// uint8_t getHours()
-// {
-// 	return sys_clock(CLOCK_HOURS);
-// }
-// uint8_t getMinutes()
-// {
-// 	return sys_clock(CLOCK_MINUTES);
-// }
-// uint8_t getSeconds()
-// {
-// 	return sys_clock(CLOCK_SECONDS);
-// }
+
 void clear()
 {
     sys_clearScreen();
@@ -324,14 +297,7 @@ void printDec(uint64_t value)
 {
 	printBase(value, 10);
 }
-// void printDecAT(uint64_t value, int x, int y) {
-// 	int length = uintToBase(value, buffer, 10);
-// 	sys_writeAt (buffer, length, x, y);
-// }
-// void printHexAT(uint64_t value, int x, int y) {
-// 	int length = uintToBase(value, buffer, 16);
-// 	sys_writeAt (buffer, length, x, y);
-// }
+
 
 void printHex(uint64_t value)
 {
@@ -346,6 +312,30 @@ void printBase(uint64_t value, uint32_t base)
 	uintToBase(value, buffer, base);
 	print(buffer);
 }
+
+int strlen(char * s)
+{
+    int i;
+    for (i = 0; s[i] != '\0'; i++);
+    return i;
+}
+
+char *strcpy(char *destination, const char *source)
+{
+
+    char *ptr = destination;
+
+    while (*source != '\0')
+    {
+        *destination = *source;
+        destination++;
+        source++;
+    }
+
+    *destination = '\0';
+    return ptr;
+ }
+
 void print(const char *str)
 {
 	for (int i = 0; str[i]; i++)
@@ -357,10 +347,7 @@ void printChar(char c)
 {
 	sys_write(STDIN, &c, 1);
 }
-// uint64_t getTicks()
-// {
-// 	return sys_timerTick();
-// }
+
 uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
 {
 	char *p = buffer;
@@ -389,14 +376,6 @@ uint32_t uintToBase(uint64_t value, char *buffer, uint32_t base)
 	return digits;
 }
 
-// char getCharContinues()
-// {
-//     char buff[2] = {0};
-//     int ret = sys_read(0, buff, 2);
-//     if (ret <= 0)
-//         return -1;
-//     return buff[0];
-// }
 
 int getSecondsElapsed()
 {

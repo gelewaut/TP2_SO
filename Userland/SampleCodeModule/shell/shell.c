@@ -145,8 +145,8 @@ void shell_loop()
 
 void shell_read_line()
 {
-    uint8_t c;
-    while ((c = getChar()) != ENTER)
+    int8_t c;
+    while ((c = getCharContinues()) != ENTER)
     {
         if (c == BACKSPACE)
         {
@@ -156,7 +156,7 @@ void shell_read_line()
                 putChar(c);
             }
         }
-        else
+        else if (c > 0)
         {
             shell_buffer[bufferIdx++] = c;
             putChar(c);
@@ -224,12 +224,13 @@ uint8_t shell_execute()
 }
 
 
-uint64_t commandDispatcher(uint64_t cmd, int argc, char * argv[], int fd[2]) {
+uint64_t commandDispatcher(uint64_t cmd, int argc, char ** argv, int fd[2]) {
     Command command = command_functions[cmd];
     int foreground = 1;
     if (command != 0) {
-        if (cmd <= 11) {
-            return command(argc-1, argv+1);
+        if (cmd < 0) {
+            // return command(argc-1, argv+1);
+            return 1;
         } else {
             if (string_compare(args[argc-1], "&") == 0){
                 foreground = 0;

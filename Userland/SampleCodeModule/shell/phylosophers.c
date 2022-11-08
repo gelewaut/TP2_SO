@@ -79,9 +79,9 @@ void run_phylosophers()
 {
     problemRunning = 1;
     semMutex = sys_semCreate("Mutex", 1);
-    printf("Bienvenido al problema de los filosofos\n");
+    printf("\nBienvenido al problema de los filosofos\n");
     printf("El problema tiene un minimo de 4 filosofos y un maximo de 8 filosofos\n");
-    printf("Puedes agregar un filosofo presionando la tecla \'a\', sacar uno presionando la tecla \'d\' y salir con la tecla \'q\'.\n");
+    printf("Puedes agregar un filosofo presionando la tecla a, sacar uno presionando la tecla d, imprimir estados con la tecla p y salir con la tecla q.\n");
     printf("El estado de cada uno se muestra como E (Eating) o . (Hungry)\n\n");
 
     printf("Esperando a los filosofos...\n\n");
@@ -94,38 +94,31 @@ void run_phylosophers()
 
     }
 
-    char *args[] = {"PrintTable"};
-    int fd[2];
-    fd[0] = 0;
-    fd[1] = 1;
-    int printTablePid = sys_createProcess(&printTable, 1, args, fd, 1);
-    while (problemRunning)
+    char key;
+    if ((key = getCharContinues())!= 'q')
     {
-
-        char key = getChar();
         switch (key)
         {
-        case 'a':
-        if (addPhylosopher() == -1)
-            printf("No se puede agregar otro filosofo. Hay un maximo de 8 filosofos.\n");
-        else
-            printf("Se unio un nuevo filosofo\n");
-        break;
+            case 'a':
+            if (addPhylosopher() == -1)
+                printf("No se puede agregar otro filosofo. Hay un maximo de 8 filosofos.\n");
+            else
+                printf("Se unio un nuevo filosofo\n");
+            break;
         case 'd':
-        if (removePhylosopher() == -1)
-            printf("No se puede sacar otro filosofo. Hay un minimo de 4 filosofos.\n");
-        else
-            printf("Se saco un filosofo\n");
-        break;
-        case 'q':
-        printf("Programa terminado\n");
-        problemRunning = 0;
-        break;
+            if (removePhylosopher() == -1)
+                printf("No se puede sacar otro filosofo. Hay un minimo de 4 filosofos.\n");
+            else
+                printf("Se saco un filosofo\n");
+            break;
+        case 'p':
+            printTable();
         default:
         break;
         }
     }
-
+    problemRunning = 0;
+    printf("Programa terminado...\n");
     for (int i = 0; i < actualPhylosopherCount; i++)
     {
         sys_semClose(phylos[i]->sem);
@@ -133,7 +126,6 @@ void run_phylosophers()
         sys_free(phylos[i]);
     }
     actualPhylosopherCount = 0;
-    sys_killProcess(printTablePid);
     sys_semClose(semMutex);
 }
 
@@ -151,7 +143,10 @@ int addPhylosopher()
     auxPhylo->sem = sys_semOpen("Mutex");
     char buffer[3];
     char *name[] = {"phylosopher", (char*)numToStr(actualPhylosopherCount, buffer, 10)};
-    auxPhylo->pid = sys_createProcess(&phylo, 2, name, 0, 1);
+    int fd[2];
+    fd[0] = 0;
+    fd[1] = 1;
+    auxPhylo->pid = sys_createProcess(&phylo, 2, name, fd, 0);
     phylos[actualPhylosopherCount++] = auxPhylo;
     sys_semSignal(semMutex);
     return 0;
@@ -174,19 +169,15 @@ int removePhylosopher()
     return 0;
 }
 
-void printTable(int argc, char *args[])
+void printTable()
 {
-    while (problemRunning)
+    sys_semWait(semMutex);
+    for (int i = 0; i < actualPhylosopherCount; i++)
     {
-        sys_semWait(semMutex);
-        for (int i = 0; i < actualPhylosopherCount; i++)
-        {
         phylos[i]->state == EATING ? putChar('E') : putChar('.');
         putChar(' ');
-        }
-        putChar('\n');
-        sys_semSignal(semMutex);
-        sys_yield();
     }
+    putChar('\n');
+    sys_semSignal(semMutex);
 }
 

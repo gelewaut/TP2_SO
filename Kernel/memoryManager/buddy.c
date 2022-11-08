@@ -186,7 +186,7 @@ void print_memSet()
     lists_t *list, *aux;
     uint32_t index = 0;
     uint32_t availableSpace = 0;
-    ncPrint("Levels with free blocks:\n");
+    ncPrint("\nLevels with free blocks:\n");
     for (int i = buckets_count - 1; i >= 0; i--)
     {
         list = &buckets[i];
@@ -194,21 +194,21 @@ void print_memSet()
         {
           ncPrint("Bucket: ");
           ncPrintDec(i + MIN_ALLOC_LOG2);
-          ncPrintChar('\n');
+          ncPrint(", ");
           ncPrint("Free blocks of size: 2^");
           ncPrintDec(i + MIN_ALLOC_LOG2);
-          ncPrintChar('\n');
+          ncPrint(",  ");
           for (aux = list->next, index = 1; aux != list; index++, aux = aux->next)
           {
               if (aux->free)
               {
                 ncPrint("Bucket number: ");
                 ncPrintDec(index);
-                ncPrintChar('\n');
-                ncPrint("State: free\n\n");
+                ncPrint(", State: free");
                 availableSpace += index * (1 << (MIN_ALLOC_LOG2 + i));
               }
           }
+          ncPrintChar('\n');
         }
     }
     ncPrint("Available Space: ");

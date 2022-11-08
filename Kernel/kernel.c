@@ -86,36 +86,6 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-/*
-static void processTwo () {
-    for (int i = 0; i<1; i++){
-		ncPrintChar('a');
-		halt(1);
-		// blockProcess(2);
-	}
-	killProcess(2);
-}
-
-static void processThree () {
-	for (int i=0; i<1; i++) {
-        ncPrintChar('b');
-		halt(1);
-		// blockProcess(3);
-	}
-	killProcess(3);
-}
-
-static void processFour () {
-	while (1) {
-        ncPrintChar('c');
-		halt(1);
-		// blockProcess(4);
-		// unblockProcess(3);
-		// unblockProcess(2);
-	}
-}
-*/
-
 int main()
 {	
 	mem_init((char *)sampleHeapAddress, HEAP_MEMORY_SIZE);
@@ -128,48 +98,10 @@ int main()
 	addProcess(sampleCodeModuleAddress, 1, args, fd, 1);
 	
 	load_idt();
-	/*
-	addProcess(&processTwo, 0, NULL, 1);
-    addProcess(&processThree, 0, NULL, 10);
-    addProcess(&processFour, 0, NULL, 10);
-
-	ncPrint("[Kernel Main]");
-	ncNewline();
-	ncPrint("  Sample code module at 0x");
-	ncPrintHex((uint64_t)sampleCodeModuleAddress);
-	ncNewline();
-	ncPrint("  Calling the sample code module returned: ");
-	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
-	ncNewline();
-	ncNewline();
-
-	ncPrint("  Sample data module at 0x");
-	ncPrintHex((uint64_t)sampleDataModuleAddress);
-	ncNewline();
-	ncPrint("  Sample data module contents: ");
-	ncPrint((char*)sampleDataModuleAddress);
-	ncNewline();
-
-	ncPrint("[Finished]");
-	*/
-
-	
-	// Fin de codigo de inicial
-	// halt(3);
-	// ncClear();
-	// halt(1);
 	
 	while(1){
 		ncPrintChar('/');
 	}
-
-	// uint64_t key;
-	// while((key = getKey())) {
-		// uint64_t key = getKey();
-	    // ncPrintDec(key);
-	    // ncPrintChar(' ');
-		// ncPrintChar('a');
-	// }
 
 	return 0;
 }

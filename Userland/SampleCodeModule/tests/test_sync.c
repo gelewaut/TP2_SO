@@ -54,17 +54,15 @@ uint64_t test_sync(uint64_t argc, char *argv[]){ //{n, use_sem, 0}
   uint64_t pids[2 * TOTAL_PAIR_PROCESSES];
   int std_fd[2] = {0, 1};
 
-  if (argc != 2) return -1;
-
-  char * argvDec[] = {argv[0], "-1", argv[1], NULL};
-  char * argvInc[] = {argv[0], "1", argv[1], NULL};
+  char * argvDec[] = {"1", "-1", "1", NULL};
+  char * argvInc[] = {"1", "1", "1", NULL};
 
   global = 0;
 
   uint64_t i;
   for(i = 0; i < TOTAL_PAIR_PROCESSES; i++){
-    pids[i] = sys_createProcess(&my_process_inc, 3, argvDec, std_fd, 1);
-    pids[i + TOTAL_PAIR_PROCESSES] = sys_createProcess(&my_process_inc, 3, argvInc, std_fd, 1);
+    pids[i] = sys_createProcess(&my_process_inc, 4, argvDec, std_fd, 1);
+    pids[i + TOTAL_PAIR_PROCESSES] = sys_createProcess(&my_process_inc, 4, argvInc, std_fd, 1);
 
   }
 
@@ -73,7 +71,9 @@ uint64_t test_sync(uint64_t argc, char *argv[]){ //{n, use_sem, 0}
     sys_wait(pids[i + TOTAL_PAIR_PROCESSES]);
   }
 
-  printf("Final value: %d\n", global);
+  char buf[10];
+  numToStr(global, buf, 10);
+  printf("Final value: %s",buf);
 
   return 0;
 }

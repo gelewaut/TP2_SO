@@ -23,6 +23,7 @@ static void firstProcess() {
 
 void exit() {
     changeProcessState(current->pcb.pid, KILLED);
+    halt(1);
 }
 
 void initScheduler() {

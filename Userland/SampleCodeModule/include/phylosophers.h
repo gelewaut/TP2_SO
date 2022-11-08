@@ -6,5 +6,12 @@
 #include <syscalls.h>
 
 void run_phylosophers();
+void printTable();
+int removePhylosopher();
+int addPhylosopher();
+void test(int i);
+void placeForks(int i);
+void takeForks(int i);
+void phylo(int argc, char *args[]);
 
 #endif

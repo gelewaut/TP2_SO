@@ -69,6 +69,7 @@ uint64_t loopCommand( uint64_t args_cant,char *args[]){
 }
 
 uint64_t killCommand( uint64_t args_cant,char *args[]){
+    printf(args[0]);
     if(args_cant == 1 ){
         uint64_t pid = strToNum(args[0]);
         if (pid != -1 )
@@ -201,36 +202,20 @@ uint64_t pipeCommand( uint64_t args_cant,char *args[]){
 
 
 uint64_t test_mm_command(uint64_t argc, char ** argv){
-    if(argc != 2){
-        printf("Cantidad de parametros invalida. Metodo de uso: test_mm <MAX_MEMORY>\n");
-    return 0;
-    }
-    return test_mm(1, &argv[1]);
+    test_mm(1, NULL);
+    return 1;
 }
 
 uint64_t test_prio_command(uint64_t argc, char ** argv){
-    if(argc != 1){
-        printf("Cantidad de parametros invalida. Metodo de uso: test_prio\n");
-        return 0;
-    }
-    test_prio(argc, argv);
+    test_prio(0, NULL);
     return 1; 
 }
 
 uint64_t test_pcs_command(uint64_t argc, char ** argv){
-    if(argc != 2){
-        printf("Cantidad de parametros invalida. Metodo de uso: test_processes <MAX_PROCESSES>\n");
-        return 0;
-    }
     return test_processes(1, &argv[1]); 
 }
 
 uint64_t test_sync_command(uint64_t argc, char ** argv){
     printf("\nIn test_sync_command...\n");
-    printf("%d, argv[0]: %s\n", argc, argv[0]);
-    if(argc != 3) {
-        printf("Cantidad de parametros invalida. Metodo de uso: test_sync <n> <use_sem>\n");
-        return 0;
-    }
     return test_sync(argc, argv);
 }
