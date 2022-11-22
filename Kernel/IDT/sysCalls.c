@@ -33,7 +33,7 @@ uint64_t sys_write(int fd, const char * buf, uint64_t count) {
     }
     
     if (aux->pcb.fd[1] == 1) {
-        for(i=0; i<count; i++) {
+        for(i=0; i<count && buf[i]; i++) {
             ncPrintChar(buf[i]);
         }
         return i;

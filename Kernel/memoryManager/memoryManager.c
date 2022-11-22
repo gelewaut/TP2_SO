@@ -1,5 +1,5 @@
 #ifndef BUDDY
-#define MEMMANAGER
+// #define MEMMANAGER
 
 //Codigo extraido o basado en el libro C Programming de Kernigan y Ritchie
 

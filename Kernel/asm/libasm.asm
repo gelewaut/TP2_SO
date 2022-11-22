@@ -1,5 +1,6 @@
 GLOBAL cpuVendor
 GLOBAL sys_xchg
+GLOBAL call_timerTick
 
 section .text
 	
@@ -36,4 +37,8 @@ sys_xchg:
 
 	mov rsp, rbp
 	pop rbp
+	ret
+
+call_timerTick:
+	int 21h
 	ret

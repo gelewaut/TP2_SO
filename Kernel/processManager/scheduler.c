@@ -5,6 +5,7 @@
 #include <stddef.h>
 #include <my_time.h>
 #include <blockedProcessList.h>
+#include <lib.h>
 
 static uint64_t Next_PID = 0;
 static processList processes;
@@ -19,11 +20,14 @@ static void wrapper(void (*entryPoint)(int, char**), int argc, char ** argv) {
 static void firstProcess() {
     while(1)
         halt(1);
+        // ncPrint('.');
+
 }
 
 void exit() {
     changeProcessState(current->pcb.pid, KILLED);
-    halt(1);
+    // halt(1);
+    call_timerTick();
 }
 
 void initScheduler() {
@@ -78,7 +82,6 @@ process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, in
     //things inherited from parent
     if (current != NULL) {
         newProcess->pcb.ppid = current->pcb.pid;
-        //pipes??
     } else {
         newProcess->pcb.ppid = 0;
     }
@@ -200,9 +203,10 @@ process * unlistProcess(uint64_t pid) {
             processes.ready--;
 
         //check if it is the last one
-        // if (previous->next == NULL)
-        //     processes.last == previous->next;
-        processes.ready--;
+        if (previous->next == NULL)
+            processes.last = NULL;
+        processes.count--;
+        previous->next = NULL;
         return previous;
     }
 
@@ -217,6 +221,7 @@ process * unlistProcess(uint64_t pid) {
             if (aux->next == NULL)
                 processes.last = previous;
             
+            aux->next = NULL;
             processes.count--;
             return aux;
         }
@@ -235,6 +240,7 @@ process * findReadyProcess () {
         processes.first = previous->next;
         processes.ready--;
         processes.count--;
+        previous->next = NULL;
         return previous;
     }
 
@@ -247,6 +253,7 @@ process * findReadyProcess () {
             //check if it is the last one
             if (aux->next == NULL)
                 processes.last = previous;
+            aux->next = NULL;
             processes.count--;
             return aux;
         }
@@ -296,7 +303,8 @@ void yield() {
         current->pcb.cycles = 0;
     }
     //CALL TIMER TICK
-    halt(1);
+    // halt(1);
+    call_timerTick();
 }
 
 void wait(uint64_t pid) {
@@ -304,7 +312,8 @@ void wait(uint64_t pid) {
     if (aux == NULL)
         return;
     aux->pcb.start = blockNewProcess(aux->pcb.start, current);
-    halt(1);
+    // halt(1);
+    call_timerTick();
 }
 
 process * getCurrentProcess() {

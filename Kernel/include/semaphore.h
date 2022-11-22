@@ -16,7 +16,7 @@ typedef struct Semaphore {
   char name[MAX_SEM_NAME];
   uint64_t value;
   uint16_t listening;
-  uint32_t *lock;
+  uint32_t lock;
   struct waiting_list *waiting;
   uint32_t proccesses_attached;
   struct Semaphore *next;

@@ -3,6 +3,7 @@
 #include <stddef.h>
 #include <memoryManager.h>
 #include <scheduler.h>
+#include <my_time.h>
 
 static pipeContext * pipes = NULL;
 static int newFD = 2;
@@ -57,6 +58,8 @@ int readPipe (int fd, char * buff, int size) {
     
     while (aux->bytesToRead == 0){
         aux->first = blockNewProcess(aux->first, getCurrentProcess());
+        // halt(1);
+        call_timerTick();
     }
 
     int i;
@@ -82,6 +85,8 @@ int writePipe (int fd, const char * buff, int size) {
 
     while (aux->bytesToRead == PIPE_BUFFER_SIZE) {
         aux->first = blockNewProcess(aux->first, getCurrentProcess());
+        // halt(1);
+        call_timerTick();
     }
 
     int i;

@@ -5,6 +5,7 @@ uint32_t my_strlen(const char * str) {
 	uint32_t len = 0;
 	while (*str != '\0') {
 		len++;
+		str++;
 	}
 	return len;
 }

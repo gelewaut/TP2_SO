@@ -14,5 +14,6 @@ void * memcpy(void * destination, const void * source, uint64_t length);
 
 char *cpuVendor(char *result);
 uint32_t sys_xchg(uint32_t *lock, uint32_t value);
+void call_timerTick();
 
 #endif
