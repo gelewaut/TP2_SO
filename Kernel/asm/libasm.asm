@@ -40,5 +40,5 @@ sys_xchg:
 	ret
 
 call_timerTick:
-	int 21h
+	int 20h
 	ret

@@ -46,7 +46,7 @@ void initScheduler() {
 void * schedule(void * oldRsp) {
     if (current != NULL) {
         current->pcb.rsp = oldRsp;
-        if (current->pcb.cycles--) {
+        if (current->pcb.cycles-- && current->state == READY) {
             return oldRsp;
         } else {
             current->pcb.cycles = CYCLES(current->pcb.priority, current->pcb.foreground);
@@ -165,6 +165,8 @@ int changeProcessState (uint64_t pid, State state) {
         if (aux->pcb.pid == current->pcb.pid)
             current = NULL;
         aux->pcb.start = unblockAllProcess(aux->pcb.start);
+        char c = -1;
+        writePipe(aux->pcb.fd[1], &c, 1);
         freeProcess(aux);
     } else {
         if (state == BLOCKED) {
