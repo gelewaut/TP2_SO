@@ -30,6 +30,8 @@ GLOBAL sys_getTicks
 
 GLOBAL sys_wait
 
+GLOBAL sys_unblockProcess
+
 section .text
     
 ;Para pasar argumentos se usan los registros RDI, RSI,
@@ -123,3 +125,6 @@ sys_getTicks:
 
 sys_wait:
     handler_sysCall 23
+
+sys_unblockProcess:
+    handler_sysCall 24

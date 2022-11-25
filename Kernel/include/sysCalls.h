@@ -19,6 +19,7 @@ uint64_t sys_createProcess (void (*entryPoint)(int, char**), int argc, char ** a
 int sys_killProcess (uint64_t pid);
 uint64_t sys_getPID ();
 int sys_blockProcess (uint64_t pid);
+int sys_unblockProcess (uint64_t pid);
 void sys_changePriority(uint64_t pid, uint64_t priority, uint64_t foreground);
 void sys_yield();
 

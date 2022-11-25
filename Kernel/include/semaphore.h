@@ -7,11 +7,6 @@
 
 #define MAX_SEM_NAME 32
 
-typedef struct waiting_list {
-  uint64_t pid;
-  struct waiting_list *next;
-} waiting_list;
-
 typedef struct Semaphore {
   char name[MAX_SEM_NAME];
   uint64_t value;

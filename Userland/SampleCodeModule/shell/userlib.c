@@ -258,19 +258,24 @@ int printf(char *str, ...)
 char getChar()
 {
 	char c;
-	while( sys_read(STDIN, &c, 1) < 1);
+	// while( sys_read(STDIN, &c, 1) < 1);
+	if (sys_read(STDIN, &c, 1) < 1) {
+		return 0;
+	}
 	return c;
 }
 void putChar(char c)
 {
-	sys_write(STDOUT, &c, 1);
+	char buff[2] = {0};
+    buff[0] = c;
+    sys_write(1,buff,2);
 }
 char getCharContinues()
 {
     char buff[2] = {0};
     int ret = sys_read(0, buff, 2);
     if (ret <= 0)
-        return -1;
+        return 0;
     return buff[0];
 }
 
@@ -387,4 +392,10 @@ void sleep(unsigned int seconds)
 {
       unsigned int limitTime = seconds + getSecondsElapsed();
       while (getSecondsElapsed() < limitTime);
+}
+
+void printPID (int pid) {
+	char buf[10];
+	numToStr(pid, buf, 10);
+	printf("%s  ", buf);
 }

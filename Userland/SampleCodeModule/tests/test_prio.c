@@ -4,17 +4,14 @@
 #include <test_util.h>
 #include <stddef.h>
 
-#define MINOR_WAIT 1000000 // TODO: Change this value to prevent a process from flooding the screen
-#define WAIT      10000000 // TODO: Change this value to make the wait long enough to see theese processes beeing run at least twice
-
 #define TOTAL_PROCESSES 3
-#define LOWEST 1 //TODO: Change as required
-#define MEDIUM 2 //TODO: Change as required
-#define HIGHEST 3 //TODO: Change as required
+#define LOWEST 5 //TODO: Change as required
+#define MEDIUM 3 //TODO: Change as required
+#define HIGHEST 1 //TODO: Change as required
 
 int64_t priority[TOTAL_PROCESSES] = {LOWEST, MEDIUM, HIGHEST};
 
-void test_prio(uint64_t args_cant, char *args[]){
+void test_prio(){
 
     int64_t pids[TOTAL_PROCESSES];
     char *argv[] = {"endless_loop_print"};
@@ -24,7 +21,7 @@ void test_prio(uint64_t args_cant, char *args[]){
     fd[0] = 0;
     fd[1] = 1;
     for(i = 0; i < TOTAL_PROCESSES; i++){
-      pids[i] = sys_createProcess(&endless_loop_print, 2, argv, fd, 1);
+      pids[i] = sys_createProcess(&endless_loop_print, 1, argv, fd, 1);
     }
 
     bussy_wait( TOTAL_PROCESSES * WAIT);

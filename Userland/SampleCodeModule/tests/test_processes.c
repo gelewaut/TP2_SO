@@ -6,7 +6,7 @@
 enum State {RUNNING, BLOCKED, KILLED};
 
 typedef struct P_rq{
-    int32_t pid;
+    uint64_t pid;
     enum State state;
 }p_rq;
 
@@ -16,18 +16,19 @@ int64_t test_processes(uint64_t argc, char *argv[]){
     uint8_t action;
     uint64_t max_processes;
     char * argvAux[] = {"endless_loop"};
+    int fd[2] = {0,1};
 
-    if (argc != 0) return -1;
+    if (argc != 1) return -1;
 
-    // if ((max_processes = satoi(argv[0])) <= 0) return -1;
-    max_processes = 5;
+    if ((max_processes = satoi(argv[0])) <= 0) return -1;
+
     p_rq p_rqs[max_processes];
 
     while (1){
 
       // Create max_processes processes
       for(rq = 0; rq < max_processes; rq++){
-        p_rqs[rq].pid = sys_createProcess(&endless_loop, 1, argvAux, 0, 1);
+        p_rqs[rq].pid = sys_createProcess(&endless_loop, 1, argvAux, fd, 0);
 
         if (p_rqs[rq].pid == -1){
           printf("test_processes: ERROR creating process\n");

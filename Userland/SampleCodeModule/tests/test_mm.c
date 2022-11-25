@@ -16,9 +16,11 @@ uint64_t test_mm(uint64_t args_cant, char *args[]){
     uint32_t total;
     uint64_t max_memory;
 
-    max_memory = 1024*1024;
-
-    printf("\nComienzo del testeo de memory manager.\n");
+    if (args_cant != 1)
+      return -1;
+    
+    if ((max_memory = satoi(args[0])) <= 0)
+      return -1;
 
     while (1){
       rq = 0;
@@ -27,7 +29,7 @@ uint64_t test_mm(uint64_t args_cant, char *args[]){
       // Request as many blocks as we can
       while(rq < MAX_BLOCKS && total < max_memory){
         mm_rqs[rq].size = GetUniform(max_memory - total - 1) + 1;
-        mm_rqs[rq].address = (void *)sys_malloc(mm_rqs[rq].size);
+        mm_rqs[rq].address = sys_malloc(mm_rqs[rq].size);
 
         if(mm_rqs[rq].address){
           total += mm_rqs[rq].size;

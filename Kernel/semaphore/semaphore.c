@@ -101,18 +101,19 @@ static Semaphore *find_sem(const char * _name) {
     if (my_strcmp(c_sem->name, _name) == 0) {
       return c_sem;
     }
+    c_sem = c_sem->next;
   }
   return NULL;
 }
 
 Semaphore *sem_create(const char * _name, uint64_t _value) {
-  Semaphore *sem = my_malloc(sizeof(Semaphore));
-  if (sem == NULL) {
-    ncPrintln("Error en malloc.");
+  if (find_sem(_name) != NULL) {
+    // ncPrintln("Semaphore already exists.");
     return NULL;
   }
-  if (find_sem(_name) != NULL) {
-    ncPrintln("Semaphore already exists.");
+  Semaphore *sem = my_malloc(sizeof(Semaphore));
+  if (sem == NULL) {
+    // ncPrintln("Error en malloc.");
     return NULL;
   }
   my_strcpy(sem->name, _name);

@@ -22,7 +22,7 @@ typedef struct PCB {
     char name[30];
     uint64_t argc;
     char ** argv;
-    struct blockedProcess * start;
+    struct waiting_list * start;
 } PCB;
 
 

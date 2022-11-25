@@ -11,20 +11,22 @@ static char *valid_commands[NUMBER_OF_COMMANDS+1] = {
     "pipe",     // 2
     "mem",      // 3
     "ps",       // 4
-    "kill",     // 5
-    "nice",     // 6
-    "block",    // 7
-    "sem",      // 8
-    "testmm",   // 9
-    "testprio", // 10
-    "testprocesses",    // 11
-    "testsync", // 12
+    "sem",      // 5
 
-    "cat",      // 13
-    "wc",       // 14
-    "loop",     // 15
-    "phylo",    // 16
-    "filter"    // 17
+    "kill",     // 6
+    "nice",     // 7
+    "block",    // 8
+    "unblock",   // 9
+    "testmm",   // 10
+    "testprio", // 11
+    "testprocesses",    // 11
+    "testsync", // 13
+
+    "cat",      // 14
+    "wc",       // 15
+    "loop",     // 16
+    "phylo",    // 17
+    "filter"    // 18
 };
 
 uint64_t helpCommand(uint64_t args_cant,char *args[]);
@@ -35,6 +37,7 @@ uint64_t loopCommand(uint64_t args_cant,char *args[]);
 uint64_t killCommand(uint64_t args_cant,char *args[]);
 uint64_t niceCommand(uint64_t args_cant,char *args[]);
 uint64_t blockCommand(uint64_t args_cant,char *args[]);
+uint64_t unblockCommand( uint64_t args_cant,char *args[]);
 uint64_t semCommand(uint64_t args_cant,char *args[]);
 uint64_t catCommand(uint64_t args_cant,char *args[]);
 uint64_t wcCommand(uint64_t args_cant,char *args[]);

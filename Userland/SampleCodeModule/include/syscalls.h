@@ -19,6 +19,7 @@ void sys_yield();
 void sys_changePriority(uint64_t pid, uint64_t priority, uint64_t foreground);
 void sys_printProcesses();
 int sys_blockProcess(uint64_t pid);
+int sys_unblockProcess (uint64_t pid);
 void sys_wait(uint64_t pid);
 
 Semaphore* sys_semCreate (const char * _name, uint64_t _value);

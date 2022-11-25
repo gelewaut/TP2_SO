@@ -6,6 +6,7 @@
 #include <my_time.h>
 #include <blockedProcessList.h>
 #include <lib.h>
+#include <semaphore.h>
 
 static uint64_t Next_PID = 0;
 static processList processes;
@@ -46,7 +47,7 @@ void initScheduler() {
 void * schedule(void * oldRsp) {
     if (current != NULL) {
         current->pcb.rsp = oldRsp;
-        if (current->pcb.cycles-- && current->state == READY) {
+        if (current->state == READY && current->pcb.cycles-- ) {
             return oldRsp;
         } else {
             current->pcb.cycles = CYCLES(current->pcb.priority, current->pcb.foreground);
@@ -158,13 +159,16 @@ void copyArgs(process * newProcess, int argc, char ** argv) {
 
 int changeProcessState (uint64_t pid, State state) {
     process * aux = unlistProcess(pid);
+    uint64_t pid1, pid2;
     if (aux == NULL)
         return -1;
 
     if (state == KILLED) {
+        pid1 = aux->pcb.pid;
+        pid2 = current->pcb.pid;
         if (aux->pcb.pid == current->pcb.pid)
             current = NULL;
-        aux->pcb.start = unblockAllProcess(aux->pcb.start);
+        aux->pcb.start = unblockWaitingList(aux->pcb.start);
         char c = -1;
         writePipe(aux->pcb.fd[1], &c, 1);
         freeProcess(aux);
@@ -177,6 +181,9 @@ int changeProcessState (uint64_t pid, State state) {
         aux->state = state;
         listProcess(aux);
     }
+    
+    call_timerTick();
+
     return 0;
 }
 
@@ -311,9 +318,9 @@ void yield() {
 
 void wait(uint64_t pid) {
     process * aux = findProcess(pid);
-    if (aux == NULL)
+    if (aux == NULL || aux->state == KILLED)
         return;
-    aux->pcb.start = blockNewProcess(aux->pcb.start, current);
+    aux->pcb.start = addProcessWait(aux->pcb.start, getPID());
     // halt(1);
     call_timerTick();
 }

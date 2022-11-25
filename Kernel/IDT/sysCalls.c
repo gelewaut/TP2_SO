@@ -14,7 +14,7 @@ uint64_t sys_read(int fd, char * buf, uint64_t count) {
         return -1;
     }
     
-    if (aux->pcb.fd[0] == 0) {
+    if (aux->pcb.fd[0] == 0 && aux->pcb.foreground) {
         char *buff = (char *)buf;
         return dumpBuffer(buff, count);
     }
@@ -32,7 +32,7 @@ uint64_t sys_write(int fd, const char * buf, uint64_t count) {
         return -1;
     }
     
-    if (aux->pcb.fd[1] == 1) {
+    if (aux->pcb.fd[1] == 1 && aux->pcb.foreground) {
         for(i=0; i<count && buf[i]; i++) {
             ncPrintChar(buf[i]);
         }
@@ -62,15 +62,11 @@ uint64_t sys_getPID () {
 }
 
 int sys_blockProcess (uint64_t pid) {
-    process * aux = findProcess(pid);
-    if (aux == NULL)
-        return -1;
-    if (aux->state == READY) {
-       return changeProcessState(pid, BLOCKED);
-    } else if (aux->state == BLOCKED){
-        return changeProcessState(pid, READY);
-    }
-    return -1;
+    return changeProcessState(pid, BLOCKED);
+}
+
+int sys_unblockProcess (uint64_t pid) {
+    return changeProcessState(pid, READY);
 }
 
 void sys_changePriority(uint64_t pid, uint64_t priority, uint64_t foreground) {

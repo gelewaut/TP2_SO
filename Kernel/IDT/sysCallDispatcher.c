@@ -34,7 +34,8 @@ static SysCall sysCalls[25] = {
     (SysCall)&ncClear,            //21
     (SysCall)&sys_getTicks,        // 22  
 
-    (SysCall)&sys_wait        // 22  
+    (SysCall)&sys_wait,        // 23
+    (SysCall)&sys_unblockProcess        // 24
     };
 
 uint64_t sysCallDispatcher(uint64_t rdi, uint64_t rsi, uint64_t rdx, uint64_t rcx, uint64_t r8, uint64_t r9_rax) {

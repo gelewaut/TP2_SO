@@ -19,22 +19,23 @@ static Command command_functions[NUMBER_OF_COMMANDS] = {
     (Command)&pipeCommand,          //  1    
     (Command)&printmemCommand,      //  2
     (Command)&psCommand,            //  3
-    (Command)&killCommand,          //  4
-    (Command)&niceCommand,          //  5   
-    (Command)&blockCommand,         //  6
-    (Command)&semCommand,           //  7
-    (Command)&test_mm_command,              //  8
-    (Command)&test_prio_command,            //  9
-    (Command)&test_pcs_command,       //  10
-    (Command)&test_sync_command,            //  11
+    (Command)&semCommand,           //  4
 
-
+    
     //No built in
-    (Command)&catCommand,           //  12
-    (Command)&wcCommand,            //  13
-    (Command)&loopCommand,          //  14
-    (Command)&phyloCommand,         //  15
-    (Command)&filterCommand         //  16  
+    (Command)&killCommand,          //  5
+    (Command)&niceCommand,          //  6   
+    (Command)&blockCommand,         //  7
+    (Command)&unblockCommand,       //  8
+    (Command)&test_mm_command,      //  9
+    (Command)&test_prio_command,    //  10
+    (Command)&test_pcs_command,     //  11
+    (Command)&test_sync_command,    //  12
+    (Command)&catCommand,           //  13
+    (Command)&wcCommand,            //  14
+    (Command)&loopCommand,          //  15
+    (Command)&phyloCommand,         //  16
+    (Command)&filterCommand         //  17  
 };
 
 void printArgs(int argc, char ** argv) {
@@ -55,12 +56,8 @@ void readArgs(int argc, char ** argv) {
             printf("\nPipes Work\n");
             return;
         }
-        // printf("read");
         putChar(c);
     }
-    // for (int i=0; i<argc; i++) {
-        // printf(argv[i]);
-    // }
 }
 
 void init_shell()
@@ -178,17 +175,6 @@ void init_pipe(int pipe_idx) {
         argv_right[j] = argv[i];
     }
 
-    /*
-    for (int i=0; i<argc_left; i++) {
-        putChar('\n');
-        printf(argv_left[i]);
-    }
-    for (int i=0; i<argc_right; i++) {
-        putChar('\n');
-        printf(argv_right[i]);
-    }
-    */
-
     //abro pipes
     int read = sys_createPipe(PIPE_ID, 0);
     int write = sys_openPipe(PIPE_ID++, 1);
@@ -196,13 +182,6 @@ void init_pipe(int pipe_idx) {
         printf("Pipe Couldnt be opened\n");
         return;
     }
-
-    // int fd_left[2] = {0,write};
-    // int fd_right[2] = {read, 1};
-    // int fd[2] = {0,1};
-
-    // int pid_left = sys_createProcess(&printArgs, argc_left, argv_left, fd_left, 1);
-    // int pid_right = sys_createProcess(&readArgs, argc_right, argv_right, fd_right, 1);
 
     int pid_left = execute_command(argc_left, argv_left, 0, write, 1);
     if (pid_left <= 0) {
@@ -235,22 +214,21 @@ int execute_command(int argc_, char ** argv_, int fd_in, int fd_out, int pipe) {
     if (string_compare(argv_[argc_-1], "&") == 0) {
         foreground = 0;
         argc_--;
-        if (fd_in == 0) {
-            fd_in = -1;
-        } 
-        if (fd_out == 1) {
-            fd_out = -1;
-        }
     }
     int cmd = check_command(argv_[0]);
     int fd[2] = {fd_in, fd_out};
+
     if (cmd > 0 ) {
         Command command = command_functions[cmd-1];
-        int childPid = sys_createProcess((void *)command, argc_, argv_, fd, foreground);
-        if (foreground && !pipe) {
-            sys_wait(childPid);
+        if (cmd <= 4 ) {
+            return command(argc_-1, &(argv[1]));
+        } else {
+            int childPid = sys_createProcess((void *)command, argc_, argv_, fd, foreground);
+            if (foreground && !pipe) {
+                sys_wait(childPid);
+            }
+            return childPid;
         }
-        return childPid;
     }
     return -1;
 }

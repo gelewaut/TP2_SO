@@ -49,5 +49,6 @@ int getSecondsElapsed();
 char *strcpy(char *destination, const char *source);
 int strlen(char * s);
 long strtol(const char *nptr, char **endptr, register int base);
+void printPID();
 
 #endif

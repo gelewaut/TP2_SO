@@ -95,7 +95,7 @@ void run_phylosophers()
     }
 
     char key;
-    if ((key = getCharContinues())!= 'q')
+    while ((key = getCharContinues())!= 'q')
     {
         switch (key)
         {
