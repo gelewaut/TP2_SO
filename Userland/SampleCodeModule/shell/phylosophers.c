@@ -16,6 +16,7 @@ typedef enum
 typedef struct Phylosopher
 {
     int pid;
+    int order;
     Semaphore * sem;
     PHYLO_STATE state;
 } Phylosopher;
@@ -78,6 +79,7 @@ void test(int i)
 void run_phylosophers()
 {
     problemRunning = 1;
+    actualPhylosopherCount = 0;
     semMutex = sys_semCreate("Mutex", 1);
     printf("\nBienvenido al problema de los filosofos\n");
     printf("El problema tiene un minimo de 4 filosofos y un maximo de 8 filosofos\n");
@@ -94,7 +96,19 @@ void run_phylosophers()
 
     }
 
+    // sys_printProcesses();
+
+    // for (int j=0; j<actualPhylosopherCount; j++) {
+    //     printPID(phylos[j]->pid);
+    // }
+
+    int fd[2] = {0,1};
+    char *args[] = {"PrintTable"};
+    int printTablePid = sys_createProcess(&printTable, 1, args, fd, 1);
+
     char key;
+    
+    // if ((key = getCharContinues())!= 'q')
     while ((key = getCharContinues())!= 'q')
     {
         switch (key)
@@ -112,7 +126,9 @@ void run_phylosophers()
                 printf("Se saco un filosofo\n");
             break;
         case 'p':
-            printTable();
+            // printTable();
+            sys_printProcesses();
+            sys_printSemaphores();
         default:
         break;
         }
@@ -125,6 +141,7 @@ void run_phylosophers()
         sys_killProcess(phylos[i]->pid);
         sys_free(phylos[i]);
     }
+    sys_killProcess(printTablePid);
     actualPhylosopherCount = 0;
     sys_semClose(semMutex);
 }
@@ -142,11 +159,11 @@ int addPhylosopher()
     auxPhylo->state = THINKING;
     auxPhylo->sem = sys_semOpen("Mutex");
     char buffer[3];
-    char *name[] = {"phylosopher", (char*)numToStr(actualPhylosopherCount, buffer, 10)};
-    int fd[2];
-    fd[0] = 0;
-    fd[1] = 1;
-    auxPhylo->pid = sys_createProcess(&phylo, 2, name, fd, 0);
+    numToStr(actualPhylosopherCount, buffer, 10);
+    char *name[] = {"phylosopher", buffer};
+    int fd[2] = {0,1};
+    auxPhylo->pid = sys_createProcess(&phylo, 2, name, fd, 1);
+    sys_changePriority(auxPhylo->pid, 10, 0);
     phylos[actualPhylosopherCount++] = auxPhylo;
     sys_semSignal(semMutex);
     return 0;
@@ -171,13 +188,16 @@ int removePhylosopher()
 
 void printTable()
 {
-    sys_semWait(semMutex);
-    for (int i = 0; i < actualPhylosopherCount; i++)
-    {
-        phylos[i]->state == EATING ? putChar('E') : putChar('.');
-        putChar(' ');
+    while (problemRunning) {
+        sys_semWait(semMutex);
+        for (int i = 0; i < actualPhylosopherCount; i++)
+        {
+            phylos[i]->state == EATING ? putChar('E') : putChar('.');
+            putChar(' ');
+        }
+        putChar('\n');
+        sys_semSignal(semMutex);
+        sys_yield();
     }
-    putChar('\n');
-    sys_semSignal(semMutex);
 }
 

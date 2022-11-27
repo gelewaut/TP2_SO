@@ -8,11 +8,10 @@
 #define NULL (void *) 0
 
 static int64_t global;  //shared memory
-// char * SEM_ID = "sem";
 
 void slowInc(int64_t *p, int64_t inc){
-  uint64_t aux = *p;
-  
+  int64_t aux = *p;
+
   sys_yield(); //This makes the race condition highly probable
   aux += inc;
   *p = aux;
@@ -23,9 +22,6 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]){
   int8_t inc;
   Semaphore * sem;
   int8_t use_sem;
-
-  // printPID(sys_getPID());
-  // sys_printProcesses();
 
   if (argc != 4) {
     printf("Not ok");
@@ -44,8 +40,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]){
   }
 
   uint64_t i;
-  // for (i = 0; i < n; i++){
-  for (i = 0; i < 1000; i++){
+  for (i = 0; i < n; i++){
     // printf(" Wait ");
     // printPID(sys_getPID());
     if (use_sem) sys_semWait(sem);
@@ -87,6 +82,7 @@ uint64_t test_sync(uint64_t argc, char *argv[]){ //{n, use_sem, semName}
     sys_wait(pids[i + TOTAL_PAIR_PROCESSES]);
   }
 
+  sys_semClose(sem);
   char buf[10];
   numToStr(global, buf, 10);
   printf("Final value: %s",buf);

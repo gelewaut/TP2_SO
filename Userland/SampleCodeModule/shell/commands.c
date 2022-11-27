@@ -35,7 +35,7 @@ uint64_t printmemCommand( uint64_t args_cant,char *args[])
     return EXIT_SUCCESS;
 }
 
-//muy malllllllllll
+//ok, a la 2da que se corre vez no funciona
 uint64_t phyloCommand( uint64_t args_cant,char *args[]){
     if(args_cant == 0 ){
         run_phylosophers();

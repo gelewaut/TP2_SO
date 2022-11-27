@@ -34,13 +34,16 @@ uint8_t sem_wait(Semaphore *sem) {
     mutex_unlock(&(sem->lock));
     uint64_t pid = getPID();
     add_to_waiting_list(sem, pid);
-    changeProcessState(pid, BLOCKED);
+    // changeProcessState(pid, BLOCKED);
     call_timerTick();
   }
   return 1;
 }
 
 uint8_t sem_signal(Semaphore *sem) {
+  if (sem == NULL) {
+    return -1;
+  }
   mutex_lock(&(sem->lock));
   sem->value++;
   mutex_unlock(&(sem->lock));
@@ -128,7 +131,16 @@ Semaphore *sem_create(const char * _name, uint64_t _value) {
 }
 
 static uint8_t add_to_waiting_list(Semaphore *sem, uint64_t pid) {
+  process * auxProcess = findProcess(pid);
+    if(auxProcess == NULL) {
+        return 0;
+    }
+
+
   waiting_list *waiting_pid = my_malloc(sizeof(waiting_list));
+  if (waiting_pid == NULL) {
+    return 0;
+  } 
   waiting_pid->pid = pid;
   waiting_pid->next = NULL;
   
@@ -140,6 +152,7 @@ static uint8_t add_to_waiting_list(Semaphore *sem, uint64_t pid) {
       c_waiting = c_waiting->next;
     }
     c_waiting->next = waiting_pid;
+    auxProcess->state = BLOCKED;
   }
   return 0;
 }
