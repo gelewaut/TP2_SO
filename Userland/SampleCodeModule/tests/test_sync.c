@@ -10,8 +10,7 @@
 static int64_t global;  //shared memory
 
 void slowInc(int64_t *p, int64_t inc){
-  int64_t aux = *p;
-
+  uint64_t  aux= *p;
   sys_yield(); //This makes the race condition highly probable
   aux += inc;
   *p = aux;
@@ -41,16 +40,18 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]){
 
   uint64_t i;
   for (i = 0; i < n; i++){
-    // printf(" Wait ");
-    // printPID(sys_getPID());
-    if (use_sem) sys_semWait(sem);
+    if (use_sem){
+      sys_semWait(sem);
+    } 
     slowInc(&global, inc);
-    // printf(" Signal ");
-    // printPID(sys_getPID());
-    if (use_sem) sys_semSignal(sem);
+    if (use_sem) {
+      sys_semSignal(sem);
+    }
   }
 
-  if (use_sem) sys_semClose(sem);
+  if (use_sem) {
+    sys_semClose(sem);
+  }
   
   return 0;
 }

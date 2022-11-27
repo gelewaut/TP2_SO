@@ -149,7 +149,7 @@ void run_phylosophers()
 int addPhylosopher()
 {
     
-    if (actualPhylosopherCount == MAX_PHYLOS)
+    if (actualPhylosopherCount >= MAX_PHYLOS)
         return -1;
 
     sys_semWait(semMutex);
@@ -157,11 +157,11 @@ int addPhylosopher()
     if (auxPhylo == NULL)
         return -1;
     auxPhylo->state = THINKING;
-    auxPhylo->sem = sys_semOpen("Mutex");
     char buffer[3];
     numToStr(actualPhylosopherCount, buffer, 10);
     char *name[] = {"phylosopher", buffer};
     int fd[2] = {0,1};
+    auxPhylo->sem = sys_semCreate(buffer, 1);
     auxPhylo->pid = sys_createProcess(&phylo, 2, name, fd, 1);
     sys_changePriority(auxPhylo->pid, 10, 0);
     phylos[actualPhylosopherCount++] = auxPhylo;
@@ -178,6 +178,7 @@ int removePhylosopher()
 
     actualPhylosopherCount--;
     Phylosopher *chosenPhylo = phylos[actualPhylosopherCount];
+    phylos[actualPhylosopherCount] = NULL;
     sys_semClose(chosenPhylo->sem);
     sys_killProcess(chosenPhylo->pid);
     sys_free(chosenPhylo);
