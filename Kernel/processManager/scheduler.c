@@ -55,7 +55,11 @@ void * schedule(void * oldRsp) {
     }
     if (processes.ready) {
         current = findReadyProcess();
-        listProcess (current);
+        if (current == NULL) {
+            current = baseProcess;
+        } else {
+            listProcess (current);
+        }
     } else {
         current = baseProcess;
     }
@@ -94,11 +98,12 @@ process * newProcess(void (*entryPoint)(int, char**), int argc, char ** argv, in
     newProcess->pcb.rsp = newProcess->pcb.rbp;
     newProcess->pcb.fd[0] = fd[0];
     newProcess->pcb.fd[1] = fd[1];
-    newProcess->state = READY;
-    newProcess->next = NULL;
-    newProcess->pcb.priority = 1;
+    newProcess->pcb.start = NULL;
     newProcess->pcb.foreground = (foreground>0 ? 1:0);
     newProcess->pcb.cycles = CYCLES(newProcess->pcb.priority , newProcess->pcb.foreground);
+    newProcess->pcb.priority = 1;
+    newProcess->state = READY;
+    newProcess->next = NULL;
 
     stackFrame * aux = (stackFrame *) newProcess->pcb.rbp - 1;
     aux->rsi = newProcess->pcb.argc;
@@ -123,6 +128,7 @@ void copyArgs(process * newProcess, int argc, char ** argv) {
         // if (newProcess->pcb.name != NULL) {
             // newProcess->pcb.name = my_strcpy (newProcess->pcb.name, argv[0]);
     } else {
+        newProcess->pcb.name[0] = '\0';
         newProcess->pcb.argc = 0;
         newProcess->pcb.argv = NULL;
         return;
@@ -168,7 +174,9 @@ int changeProcessState (uint64_t pid, State state) {
         pid2 = current->pcb.pid;
         if (aux->pcb.pid == current->pcb.pid)
             current = NULL;
-        aux->pcb.start = unblockWaitingList(aux->pcb.start);
+        if (aux->pcb.start != NULL) {
+            aux->pcb.start = unblockWaitingList(aux->pcb.start);
+        }
         char c = -1;
         writePipe(aux->pcb.fd[1], &c, 1);
         freeProcess(aux);
@@ -237,7 +245,7 @@ process * unlistProcess(uint64_t pid) {
         previous = aux;
         aux = aux->next;
     }
-    return aux;
+    return NULL;
 }
 
 process * findReadyProcess () {
@@ -269,7 +277,7 @@ process * findReadyProcess () {
         previous = aux;
         aux = aux->next;
     }
-    return aux;
+    return NULL;
 }
 
 void freeProcess(process * myProcess) {
@@ -289,7 +297,7 @@ process * findProcess(uint64_t pid) {
             return aux;
         aux = aux->next;
     }
-    return aux;
+    return NULL;
 }
 
 uint64_t getPID () {

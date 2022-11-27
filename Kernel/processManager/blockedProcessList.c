@@ -15,7 +15,11 @@ waiting_list * addProcessWait(waiting_list * first, uint64_t pid) {
     }
     auxProcess->state = BLOCKED;
     aux->pid = pid;
-    aux->next = first;
+    if (first == NULL) {
+        aux->next = NULL;
+    } else {
+        aux->next = first;
+    }
     return aux;
 }
 
@@ -30,7 +34,7 @@ waiting_list * unblockWaitingList(waiting_list * first) {
         }
         my_free(aux);
     }
-    return first;
+    return NULL;
 }
 
 blockedProcess * blockNewProcess(blockedProcess * first, process * toBlock) {

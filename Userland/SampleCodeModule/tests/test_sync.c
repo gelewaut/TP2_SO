@@ -24,7 +24,7 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]){
   Semaphore * sem;
   int8_t use_sem;
 
-  printPID(sys_getPID());
+  // printPID(sys_getPID());
   // sys_printProcesses();
 
   if (argc != 4) {
@@ -44,7 +44,8 @@ uint64_t my_process_inc(uint64_t argc, char *argv[]){
   }
 
   uint64_t i;
-  for (i = 0; i < n; i++){
+  // for (i = 0; i < n; i++){
+  for (i = 0; i < 1000; i++){
     // printf(" Wait ");
     // printPID(sys_getPID());
     if (use_sem) sys_semWait(sem);

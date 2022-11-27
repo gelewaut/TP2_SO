@@ -189,11 +189,12 @@ void init_pipe(int pipe_idx) {
         return;
     }
     int pid_right = execute_command(argc_right, argv_right, read, 1, 1);
-    sys_wait(pid_left);
-    if (pid_left <= 0) {
+    if (pid_right <= 0) {
         printf("\n2nd Command not valid\n");
+        sys_killProcess(pid_left);
         return;
     }
+    sys_wait(pid_left);
     sys_wait(pid_right);
 }
 
@@ -220,7 +221,7 @@ int execute_command(int argc_, char ** argv_, int fd_in, int fd_out, int pipe) {
 
     if (cmd > 0 ) {
         Command command = command_functions[cmd-1];
-        if (cmd <= 4 ) {
+        if (cmd <= 4 && !pipe) {
             return command(argc_-1, &(argv[1]));
         } else {
             int childPid = sys_createProcess((void *)command, argc_, argv_, fd, foreground);
