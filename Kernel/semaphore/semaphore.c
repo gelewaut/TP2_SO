@@ -108,6 +108,8 @@ static uint8_t rem_sem(Semaphore *sem) {
       my_free(aux);
       return 0;
     }
+    previous = aux;
+    aux = aux->next;
   }
 
   //Semaphore was not found in the list
